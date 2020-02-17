@@ -12,3 +12,7 @@ This repo follows the YouTube video [Full Stack & Firebase Tutorial - Build a so
 `cd socialape-functions`
 
 `firebase init`
+
+Select `Functions: Configure and deploy Cloud Functions`; `Use an existing project`; `socialape--xxxx`
+
+[What is the practice on committing firebase files in a NodeJS app?](https://stackoverflow.com/questions/43527359/what-is-the-practice-on-committing-firebase-files-in-a-nodejs-app)
