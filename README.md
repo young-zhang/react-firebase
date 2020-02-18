@@ -45,14 +45,7 @@ npm install --save firebase
 ```
 
 ## After cloning the repo
-```
-cd socialape-functions
-cd functions
-npm install
-npm run build
-```
-
-Create a file  `/socialape-functions/functions/firebaseConfig.ts` and fill it with your webapp config:
+Create a file  `/socialape-functions/functions/src/firebaseConfig.ts` and fill it with your webapp config:
 
 ```
 // copy paste the following from Settings | General | Your apps | Firebase SDK snippet
@@ -69,3 +62,15 @@ const firebaseConfig = {
 
 export default firebaseConfig;
 ```
+
+Then
+
+```
+cd socialape-functions
+cd functions
+npm install
+npm run build
+```
+
+
+To debug, run `firebase emulators:start --inspect-functions`

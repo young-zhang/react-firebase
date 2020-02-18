@@ -2,15 +2,16 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as firebase from 'firebase';
 import * as express from 'express';
-import firebaseConfig from "../firebaseConfig";
+import firebaseConfig from "./firebaseConfig";
 
 admin.initializeApp();
 firebase.initializeApp(firebaseConfig);
+const db = admin.firestore();
+
 const app = express();
 
 app.get('/screams', (req, res) => {
-    admin.firestore()
-        .collection('screams')
+    db.collection('screams')
         .orderBy('createdAt', 'desc')
         .get()
         .then(data => {
@@ -38,7 +39,7 @@ app.post('/scream', (req, res) => {
             createdAt: new Date().toISOString()
         };
         console.error(newScream);
-        admin.firestore().collection('screams')
+        db.collection('screams')
             .add(newScream)
             .then(doc => {
                 res.json({message: `document ${doc.id} created successfully`});
@@ -51,16 +52,29 @@ app.post('/scream', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
-    const {email, password} = req.body; // , confirmPassword, handle
+    const {email, password, handle, confirmPassword} = req.body;
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(data => {
-            if (data.user) {
-                res.status(201).json({message: `user ${data.user.uid} signed up successfully`});
+    db.doc(`/users/${handle}`).get()
+        .then(doc => {
+            if (doc.exists) {
+                res.status(400).json({handle: 'this handle is already taken'});
+                return;
             }
             else {
-                res.status(500).json({error: "data.user is not defined"});
+                return firebase.auth().createUserWithEmailAndPassword(email, password);
             }
+        })
+        .then(data => {
+            if (data && data.user) {
+                return data.user.getIdToken();
+            }
+            else {
+                res.status(500).json({error: "data.user is undefined"});
+                return;
+            }
+        })
+        .then(token => {
+            return res.status(201).json({token});
         })
         .catch(err => {
             console.error(err);
