@@ -2,9 +2,6 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as express from 'express';
 
-//import firebaseConfig from "../firebaseConfig";
-//admin.initializeApp(firebaseConfig);
-
 admin.initializeApp();
 const app = express();
 
@@ -35,7 +32,7 @@ app.post('/scream', (req, res) => {
         const newScream = {
             body: body,
             userHandle: userHandle,
-            createdAt: admin.firestore.Timestamp.fromDate(new Date())
+            createdAt: new Date().toISOString()
         };
         console.error(newScream);
         admin.firestore().collection('screams')
