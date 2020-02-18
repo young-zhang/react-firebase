@@ -36,3 +36,11 @@ and *Generate new private key*, then set GOOGLE_APPLICATION_CREDENTIALS to the k
 `cd functions`
 
 `npm install --save express`
+
+## After cloning the repo
+```
+cd socialape-functions
+cd functions
+npm install
+npm run build
+```
