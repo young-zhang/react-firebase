@@ -29,7 +29,10 @@ and *Generate new private key*, then set GOOGLE_APPLICATION_CREDENTIALS to the k
 
 `set GOOGLE_APPLICATION_CREDENTIALS=F:\serviceAccountKey.json`
 
-
 [26:22](https://youtu.be/m_u6P5k0vP0?t=1582) Handling GET requests to createScream.
 
+[28:38](https://youtu.be/m_u6P5k0vP0?t=1718) Install Express:
 
+`cd functions`
+
+`npm install --save express`

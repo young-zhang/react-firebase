@@ -1,25 +1,21 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as express from 'express';
+
 //import firebaseConfig from "../firebaseConfig";
 
 //admin.initializeApp(firebaseConfig);
 admin.initializeApp();
+const app = express();
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-export const helloWorld = functions.https.onRequest((request, response) => {
-    response.send("Hello world!");
-});
-
-export const getScreams = functions.https.onRequest((request, response) => {
+app.get('/screams', (req, res)=> {
     admin.firestore().collection('screams').get()
         .then(data => {
-            const screams: FirebaseFirestore.DocumentData[] = [];
+            const screams: any = [];
             data.forEach(doc => {
                 screams.push(doc.data());
             });
-            return response.json(screams);
+            return res.json(screams);
         })
         .catch(err => console.error(err));
 });
@@ -47,3 +43,5 @@ export const createScream = functions.https.onRequest((req, res) => {
             });
     }
 });
+
+exports.api = functions.https.onRequest(app);
