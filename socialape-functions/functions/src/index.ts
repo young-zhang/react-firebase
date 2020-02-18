@@ -13,7 +13,10 @@ app.get('/screams', (req, res)=> {
         .then(data => {
             const screams: any = [];
             data.forEach(doc => {
-                screams.push(doc.data());
+                screams.push({
+                    screamId: doc.id,
+                    ...doc.data() // I get to use the ... operator because TypeScript!
+                });
             });
             return res.json(screams);
         })
