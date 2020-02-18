@@ -3,8 +3,8 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 
 //import firebaseConfig from "../firebaseConfig";
-
 //admin.initializeApp(firebaseConfig);
+
 admin.initializeApp();
 const app = express();
 
@@ -20,7 +20,7 @@ app.get('/screams', (req, res)=> {
         .catch(err => console.error(err));
 });
 
-export const createScream = functions.https.onRequest((req, res) => {
+app.post('/scream', (req, res) => {
     if (req.method !== 'POST') {
         res.status(400).json({error: 'Method not allowed'});
     }
