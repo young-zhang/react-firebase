@@ -22,9 +22,14 @@ Select `Functions: Configure and deploy Cloud Functions`; `Use an existing proje
 [20:48](https://youtu.be/m_u6P5k0vP0?t=1248) if trying createScream, and you get `Error: Value for argument "data" is not a valid Firestore document.`, 
 make sure the POST request is sending data as JSON and not Text. See https://i.stack.imgur.com/Mb3re.png
 
-[24:43](https://youtu.be/m_u6P5k0vP0?t=1483) 
-go to Firebase Console's *Project Settings*,
-select *Service accounts*, and *Generate new private key*.
-`set GOOGLE_APPLICATION_CREDENTIALS=F:\socialape.json`
+`firebase serve` to server the application locally.
 
-`firebase serve` to server the application locally
+If you get the error `Error: Could not load the default credentials.`, go to Firebase Console's *Project Settings*, select *Service accounts*, 
+and *Generate new private key*, then set GOOGLE_APPLICATION_CREDENTIALS to the key JSON file:
+
+`set GOOGLE_APPLICATION_CREDENTIALS=F:\serviceAccountKey.json`
+
+
+[26:22](https://youtu.be/m_u6P5k0vP0?t=1582) Handling GET requests to createScream.
+
+

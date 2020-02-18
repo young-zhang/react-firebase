@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import firebaseConfig from "../firebaseConfig";
+//import firebaseConfig from "../firebaseConfig";
 
 //admin.initializeApp(firebaseConfig);
 admin.initializeApp();
@@ -25,21 +25,25 @@ export const getScreams = functions.https.onRequest((request, response) => {
 });
 
 export const createScream = functions.https.onRequest((req, res) => {
-    console.log("createScream() executing");
-    const {body, userHandle} = req.body;
-    const newScream = {
-        body: body,
-        userHandle: userHandle,
-        createdAt: admin.firestore.Timestamp.fromDate(new Date())
-    };
-    console.error(newScream);
-    admin.firestore().collection('screams')
-        .add(newScream)
-        .then(doc => {
-            res.json({message: `document ${doc.id} created successfully`});
-        })
-        .catch(err => {
-            res.status(500).json({error: 'something went wrong'});
-            console.error(err);
-        });
+    if (req.method !== 'POST') {
+        res.status(400).json({error: 'Method not allowed'});
+    }
+    else {
+        const {body, userHandle} = req.body;
+        const newScream = {
+            body: body,
+            userHandle: userHandle,
+            createdAt: admin.firestore.Timestamp.fromDate(new Date())
+        };
+        console.error(newScream);
+        admin.firestore().collection('screams')
+            .add(newScream)
+            .then(doc => {
+                res.json({message: `document ${doc.id} created successfully`});
+            })
+            .catch(err => {
+                res.status(500).json({error: 'something went wrong'});
+                console.error(err);
+            });
+    }
 });
