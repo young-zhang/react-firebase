@@ -2,6 +2,38 @@
 
 This repo follows the YouTube video [Full Stack & Firebase Tutorial - Build a social media app](https://youtu.be/m_u6P5k0vP0?t=1)
 
+## After cloning the repo
+Create a file  `/socialape-functions/functions/src/firebaseConfig.ts` and fill it with your webapp config:
+
+```
+// copy paste the following from Settings | General | Your apps | Firebase SDK snippet
+const firebaseConfig = {
+    apiKey: "**",
+    authDomain: "**",
+    databaseURL: "**",
+    projectId: "**",
+    storageBucket: "**",
+    messagingSenderId: "**",
+    appId: "**",
+    measurementId: "**"
+};
+
+export default firebaseConfig;
+```
+
+Then
+
+```
+cd socialape-functions
+cd functions
+npm install
+npm run build
+```
+
+To debug, run `firebase emulators:start --inspect-functions`
+
+## Notes
+
 [9:35](https://youtu.be/m_u6P5k0vP0?t=575) `npm install -g firebase-tools`
 
 [10:18](https://youtu.be/m_u6P5k0vP0?t=618) `firebase login`
@@ -44,33 +76,3 @@ cd functions
 npm install --save firebase
 ```
 
-## After cloning the repo
-Create a file  `/socialape-functions/functions/src/firebaseConfig.ts` and fill it with your webapp config:
-
-```
-// copy paste the following from Settings | General | Your apps | Firebase SDK snippet
-const firebaseConfig = {
-    apiKey: "**",
-    authDomain: "**",
-    databaseURL: "**",
-    projectId: "**",
-    storageBucket: "**",
-    messagingSenderId: "**",
-    appId: "**",
-    measurementId: "**"
-};
-
-export default firebaseConfig;
-```
-
-Then
-
-```
-cd socialape-functions
-cd functions
-npm install
-npm run build
-```
-
-
-To debug, run `firebase emulators:start --inspect-functions`

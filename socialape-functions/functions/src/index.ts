@@ -53,6 +53,8 @@ app.post('/scream', (req, res) => {
 
 app.post('/signup', (req, res) => {
     const {email, password, handle, confirmPassword} = req.body;
+    let userToken: string | undefined;
+    let userId: string;
 
     db.doc(`/users/${handle}`).get()
         .then(doc => {
@@ -66,15 +68,29 @@ app.post('/signup', (req, res) => {
         })
         .then(data => {
             if (data && data.user) {
+                userId = data.user.uid;
                 return data.user.getIdToken();
             }
-            else {
-                res.status(500).json({error: "data.user is undefined"});
-                return;
-            }
+            return;
         })
         .then(token => {
-            return res.status(201).json({token});
+            if (token) {
+                userToken = token;
+                const userCredentials = {
+                    handle,
+                    email,
+                    createdAt: new Date().toISOString(),
+                    userId
+                };
+                return db.doc(`/users/${handle}`).set(userCredentials);
+            }
+            return;
+        })
+        .then(writeResult => {
+            if (writeResult) {
+                return res.status(201).json({token: userToken});
+            }
+            return;
         })
         .catch(err => {
             console.error(err);
