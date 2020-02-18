@@ -9,7 +9,10 @@ admin.initializeApp();
 const app = express();
 
 app.get('/screams', (req, res)=> {
-    admin.firestore().collection('screams').get()
+    admin.firestore()
+        .collection('screams')
+        .orderBy('createdAt', 'desc')
+        .get()
         .then(data => {
             const screams: any = [];
             data.forEach(doc => {
