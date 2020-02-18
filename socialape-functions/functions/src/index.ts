@@ -1,11 +1,14 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as firebase from 'firebase';
 import * as express from 'express';
+import firebaseConfig from "../firebaseConfig";
 
 admin.initializeApp();
+firebase.initializeApp(firebaseConfig);
 const app = express();
 
-app.get('/screams', (req, res)=> {
+app.get('/screams', (req, res) => {
     admin.firestore()
         .collection('screams')
         .orderBy('createdAt', 'desc')
@@ -47,4 +50,23 @@ app.post('/scream', (req, res) => {
     }
 });
 
-exports.api = functions.https.onRequest(app);
+app.post('/signup', (req, res) => {
+    const {email, password} = req.body; // , confirmPassword, handle
+
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(data => {
+            if (data.user) {
+                res.status(201).json({message: `user ${data.user.uid} signed up successfully`});
+            }
+            else {
+                res.status(500).json({error: "data.user is not defined"});
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({error: err.code});
+        });
+});
+
+exports.api = functions //.region('us-east4') // North VA
+    .https.onRequest(app);

@@ -33,9 +33,16 @@ and *Generate new private key*, then set GOOGLE_APPLICATION_CREDENTIALS to the k
 
 [28:38](https://youtu.be/m_u6P5k0vP0?t=1718) Install Express:
 
-`cd functions`
+```
+cd functions
+npm install --save express
+```
 
-`npm install --save express`
+[43:28](https://youtu.be/m_u6P5k0vP0?t=2608) Install firebase NPM
+```
+cd functions
+npm install --save firebase
+```
 
 ## After cloning the repo
 ```
@@ -43,4 +50,22 @@ cd socialape-functions
 cd functions
 npm install
 npm run build
+```
+
+Create a file  `/socialape-functions/functions/firebaseConfig.ts` and fill it with your webapp config:
+
+```
+// copy paste the following from Settings | General | Your apps | Firebase SDK snippet
+const firebaseConfig = {
+    apiKey: "**",
+    authDomain: "**",
+    databaseURL: "**",
+    projectId: "**",
+    storageBucket: "**",
+    messagingSenderId: "**",
+    appId: "**",
+    measurementId: "**"
+};
+
+export default firebaseConfig;
 ```
