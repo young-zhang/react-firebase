@@ -3,6 +3,9 @@ import * as admin from 'firebase-admin';
 import * as firebase from 'firebase';
 import * as express from 'express';
 import firebaseConfig from "./firebaseConfig";
+import DecodedIdToken = admin.auth.DecodedIdToken;
+// import * as core from "express-serve-static-core";
+import {Request, Response, NextFunction} from "express";
 
 admin.initializeApp();
 firebase.initializeApp(firebaseConfig);
@@ -10,7 +13,7 @@ const db = admin.firestore();
 
 const app = express();
 
-app.get('/screams', (req, res) => {
+app.get('/screams', (req: Request, res: Response) => {
     db.collection('screams')
         .orderBy('createdAt', 'desc')
         .get()
@@ -27,16 +30,44 @@ app.get('/screams', (req, res) => {
         .catch(err => console.error(err));
 });
 
-app.post('/scream', (req, res) => {
+const fbAuth = (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+        let idToken = req.headers.authorization.split('Bearer ')[1];
+        admin.auth()
+            .verifyIdToken(idToken)
+            .then((decodedToken: DecodedIdToken) => {
+                req.user = decodedToken;
+                return db.collection('users')
+                    .where('userId', '==', req.user.uid)
+                    .limit(1)
+                    .get();
+            })
+            .then(data => {
+                req.user['handle'] = data.docs[0].data().handle;
+                return next();
+            })
+            .catch(err => {
+                console.error('Error while verifying token ', err);
+                return res.status(403).json(err);
+            });
+        return;
+    }
+    else {
+        console.error('No token found');
+        return res.status(403).json({error: 'Unauthorized'});
+    }
+};
+
+app.post('/scream', fbAuth, (req: Request, res: Response) => {
     if (req.method !== 'POST') {
         res.status(400).json({error: 'Method not allowed'});
     }
     else {
-        const {body, userHandle} = req.body;
+        const {body} = req.body;
         const newScream = {
             body: body,
-            userHandle: userHandle,
-            createdAt: new Date().toISOString()
+            userHandle: req.user['handle'],
+            createdAt: new Date() //.toISOString()
         };
         console.error(newScream);
         db.collection('screams')
@@ -64,7 +95,7 @@ interface LoginErrors {
     handle?: string
 }
 
-app.post('/signup', (req, res) => {
+app.post('/signup', (req: Request, res: Response) => {
     const {email, password, handle, confirmPassword} = req.body;
 
     let errors: LoginErrors = {};
@@ -108,7 +139,7 @@ app.post('/signup', (req, res) => {
                 const userCredentials = {
                     handle,
                     email,
-                    createdAt: new Date().toISOString(),
+                    createdAt: new Date(), //.toISOString(),
                     userId
                 };
                 return db.doc(`/users/${handle}`).set(userCredentials);
@@ -133,7 +164,7 @@ app.post('/signup', (req, res) => {
     return;
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', (req: Request, res: Response) => {
     const {email, password} = req.body;
 
     let errors: LoginErrors = {};

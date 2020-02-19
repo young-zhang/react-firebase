@@ -76,3 +76,4 @@ cd functions
 npm install --save firebase
 ```
 
+[1:22:38](https://youtu.be/m_u6P5k0vP0?t=4958) [Extend Express Request object using Typescript](https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript)
