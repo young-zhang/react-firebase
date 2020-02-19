@@ -44,8 +44,8 @@ To debug, run `firebase emulators:start --inspect-functions`
 `cd socialape-functions`
 
 `firebase init`
-
 Select `Functions: Configure and deploy Cloud Functions`; `Use an existing project`; `socialape--xxxx`
+
 
 [What is the practice on committing firebase files in a NodeJS app?](https://stackoverflow.com/questions/43527359/what-is-the-practice-on-committing-firebase-files-in-a-nodejs-app)
 
@@ -63,7 +63,7 @@ and *Generate new private key*, then set GOOGLE_APPLICATION_CREDENTIALS to the k
 
 [26:22](https://youtu.be/m_u6P5k0vP0?t=1582) Handling GET requests to createScream.
 
-[28:38](https://youtu.be/m_u6P5k0vP0?t=1718) Install Express:
+[28:38](https://youtu.be/m_u6P5k0vP0?t=1718) Install [express](https://github.com/expressjs/express#readme):
 
 ```
 cd functions
@@ -77,6 +77,12 @@ npm install --save firebase
 ```
 
 [1:22:38](https://youtu.be/m_u6P5k0vP0?t=4958) [Extend Express Request object using Typescript](https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript)
+
+[1:50:37](https://youtu.be/m_u6P5k0vP0?t=6637) Install [busboy](https://github.com/mscdex/busboy#readme):
+```
+cd functions
+npm install --save busboy
+```
 
 ---
 

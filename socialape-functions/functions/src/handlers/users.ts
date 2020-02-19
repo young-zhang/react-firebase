@@ -2,6 +2,9 @@ import * as firebase from "firebase";
 import {Request, Response} from "express";
 import {db} from "../util/admin";
 import {validateLoginData, validateSignupData} from "../util/validators";
+import * as BusBoy from 'busboy'
+import * as path from 'path';
+import * as os from 'os';
 
 export const signup = (req: Request, res: Response) => {
     const {valid, errors, handle, email, password} = validateSignupData(req);
@@ -79,4 +82,7 @@ export const login = (req: Request, res: Response) => {
             return res.status(500).json({error: err.code});
         });
     return;
+};
+
+export const uploadImage = (req: Request, res: Response) => {
 };
