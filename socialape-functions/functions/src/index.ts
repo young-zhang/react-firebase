@@ -51,8 +51,37 @@ app.post('/scream', (req, res) => {
     }
 });
 
+const isEmpty = (str: string) => {
+    return (!(str && str.trim().length > 0));
+};
+
+const isEmail = (email: string) => (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email));
+
+interface LoginErrors {
+    email?: string
+    password?: string
+    confirmPassword?: string
+    handle?: string
+}
+
 app.post('/signup', (req, res) => {
     const {email, password, handle, confirmPassword} = req.body;
+
+    let errors: LoginErrors = {};
+    if (isEmpty(email)) {
+        errors.email = 'Email must not be empty';
+    }
+    else if (!isEmail(email)) {
+        errors.email = 'Must be a valid email address';
+    }
+
+    if (isEmpty(password)) errors.password = 'Password must not be empty';
+    if (password !== confirmPassword) errors.confirmPassword = 'Password and confirmation must match';
+    if (isEmpty(handle)) errors.handle = 'Handle must not be empty';
+
+    if (Object.keys(errors).length > 0)
+        return res.status(400).json(errors);
+
     let userToken: string | undefined;
     let userId: string;
 
@@ -101,6 +130,36 @@ app.post('/signup', (req, res) => {
                 res.status(500).json({error: err.code});
             }
         });
+    return;
+});
+
+app.post('/login', (req, res) => {
+    const {email, password} = req.body;
+
+    let errors: LoginErrors = {};
+    if (isEmpty(email)) errors.email = 'Email must not be empty';
+    if (isEmpty(password)) errors.password = 'Password must not be empty';
+
+    if (Object.keys(errors).length > 0)
+        return res.status(400).json(errors);
+
+    firebase.auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(cred => {
+            if (cred && cred.user) return cred.user.getIdToken();
+            return;
+        })
+        .then(token => {
+            if (token) return res.status(200).json({token});
+            return;
+        })
+        .catch(err => {
+            console.error(err);
+            if (err.code === "auth/wrong-password")
+                return res.status(403).json({general: 'Wrong credentials, please try again'});
+            return res.status(500).json({error: err.code});
+        });
+    return;
 });
 
 exports.api = functions //.region('us-east4') // North VA
