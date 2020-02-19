@@ -77,3 +77,11 @@ npm install --save firebase
 ```
 
 [1:22:38](https://youtu.be/m_u6P5k0vP0?t=4958) [Extend Express Request object using Typescript](https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript)
+
+---
+
+## Misc Resources
+- [ECMAScript 2019 Language Specification](https://www.ecma-international.org/publications/standards/Ecma-262.htm)
+- [You Don't Know JS](https://github.com/getify/You-Dont-Know-JS)
+- [What the heck is the event loop anyway?](https://youtu.be/8aGhZQkoFbQ)
+- [TypeScript Resources](https://github.com/nairobijs/Typescript-Resources)
