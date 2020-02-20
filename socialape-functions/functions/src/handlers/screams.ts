@@ -137,14 +137,20 @@ export const commentOnScream = (req: Request, res: Response) => {
         .get()
         .then(doc => {
             if (doc && doc.exists) {
-                return db
-                    .collection("comments")
-                    .add(newComment);
+                // @ts-ignore
+                let commentCount = doc.data().commentCount && doc.data().commentCount > 0 ? doc.data().commentCount : 0;
+                commentCount++;
+                return doc.ref.update({commentCount});
             }
             else {
                 res.status(404).json({error: "Scream not found"});
                 return;
             }
+        })
+        .then(() => {
+            return db
+                .collection("comments")
+                .add(newComment);
         })
         .then(() => {
             // doc created successfully
