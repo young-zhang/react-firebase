@@ -1,5 +1,7 @@
 import {Request, Response} from "express";
 import {db} from "../util/admin";
+import * as firebase from "firebase";
+import Timestamp = firebase.firestore.Timestamp;
 
 export const getAllScreams = (req: Request, res: Response) => {
     db.collection('screams')
@@ -40,4 +42,58 @@ export const postOneScream = (req: Request, res: Response) => {
                 console.error(err);
             });
     }
+};
+
+interface Comment {
+    commentId?: string
+    screamId?: string
+    userHandle?: string
+    createdAt?: Timestamp | Date
+    body?: string
+}
+
+interface Scream {
+    screamId?: string
+    createdAt?: Timestamp | Date
+    userHandle?: string
+    body?: string
+    comments: Comment[]
+}
+
+export const getScream = (req: Request, res: Response) => {
+    let screamData: Scream = {comments: []};
+    db.doc(`/screams/${req.params.screamId}`)
+        .get()
+        .then(doc => {
+            if (doc.exists) {
+                Object.assign(screamData, doc.data());
+                // @ts-ignore
+                screamData.createdAt = doc.data().createdAt.toDate();
+                screamData.screamId = doc.id;
+                return db
+                    .collection('comments')
+                    .orderBy('createdAt', 'desc') // error 9, requires an index
+                    .where('screamId', '==', screamData.screamId)
+                    .get();
+            }
+            else {
+                res.status(404).json({error: 'Scream not found'});
+                return;
+            }
+        })
+        .then(data => {
+            // @ts-ignore
+            data.forEach(doc => {
+                let comment: Comment = {};
+                Object.assign(comment, doc.data());
+                comment.createdAt = doc.data().createdAt.toDate();
+                comment.commentId = doc.id;
+                screamData.comments.push(comment);
+            });
+            return res.json(screamData);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({error: err.code});
+        });
 };
