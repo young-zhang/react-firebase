@@ -3,8 +3,10 @@ import DecodedIdToken = admin.auth.DecodedIdToken;
 import {admin, db} from "./admin";
 
 export default function (req: Request, res: Response, next: NextFunction) {
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-        let idToken = req.headers.authorization.split("Bearer ")[1];
+    const {authorization} = req.headers;
+    const bearerPrefix = "Bearer ";
+    if (authorization && authorization.startsWith(bearerPrefix)) {
+        const idToken = authorization.substr(bearerPrefix.length);
         admin.auth()
             .verifyIdToken(idToken)
             .then((decodedToken: DecodedIdToken) => {
