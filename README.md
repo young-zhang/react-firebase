@@ -81,7 +81,22 @@ npm install --save firebase
 [1:50:37](https://youtu.be/m_u6P5k0vP0?t=6637) Install [busboy](https://github.com/mscdex/busboy#readme):
 ```
 cd functions
-npm install --save busboy
+npm install --save busboy@0.3.0 @types/busboy
+```
+or, if you want to 
+[use the latest version of busboy, without corresponding types](https://medium.com/@amandeepkochhar/typescript-error-could-not-find-a-declaration-file-for-module-xyz-dfbe6e45c2bd),
+add `"noImplicitAny": false,` to `tsconfig.json`.
+
+[1:55:32](https://youtu.be/m_u6P5k0vP0?t=6932) Also, I use [node-temp](https://github.com/bruce/node-temp) instead of the crazy way of generating temp file names with `Math.random()`:
+```
+npm install temp @types/temp
+```
+
+[2:09:43](https://youtu.be/m_u6P5k0vP0?t=7783) The use of `req.rawBody` [is deprecated](https://github.com/expressjs/express/issues/897). 
+For now, one can simply use:
+```
+// @ts-ignore
+busboy.end(req.rawBody);
 ```
 
 ---

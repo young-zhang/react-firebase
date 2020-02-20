@@ -1,18 +1,22 @@
 import * as firebase from "firebase";
+import * as admin from "firebase-admin";
 import {Request, Response} from "express";
-import {db} from "../util/admin";
-import {validateLoginData, validateSignupData} from "../util/validators";
 import * as BusBoy from 'busboy'
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
+import * as temp from 'temp';
+import {db} from "../util/admin";
+import {validateLoginData, validateSignupData} from "../util/validators";
+import firebaseConfig from "../firebaseConfig";
 
 export const signup = (req: Request, res: Response) => {
     const {valid, errors, handle, email, password} = validateSignupData(req);
     if (!valid) return res.status(400).json(errors);
 
-    let userToken: string | undefined;
-    let userId: string;
+    const noImg = 'no-image.png';
 
+    let userToken: string | undefined, userId: string;
     db.doc(`/users/${handle}`).get()
         .then(doc => {
             if (doc.exists) {
@@ -37,6 +41,7 @@ export const signup = (req: Request, res: Response) => {
                     handle,
                     email,
                     createdAt: new Date(), //.toISOString(),
+                    imageUrl: noImg,
                     userId
                 };
                 return db.doc(`/users/${handle}`).set(userCredentials);
@@ -84,5 +89,42 @@ export const login = (req: Request, res: Response) => {
     return;
 };
 
+const getImageUrl = (filename: string) => {
+    return `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${filename}?alt=media`;
+};
+
 export const uploadImage = (req: Request, res: Response) => {
+    const busboy = new BusBoy({headers: req.headers});
+
+    let imageToBeUploaded = {filepath: "", mimetype: ""};
+
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        const imageExtension = path.extname(filename);
+        let filepath = temp.path({suffix: imageExtension});
+        imageToBeUploaded = {filepath, mimetype};
+        file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish', () => {
+        admin.storage().bucket()
+            .upload(imageToBeUploaded.filepath, {
+                resumable: false,
+                metadata: {
+                    contentType: imageToBeUploaded.mimetype,
+                }
+            })
+            .then(r => {
+                return db
+                    .doc(`/users/${req.user.handle}`)
+                    .update({imageUrl: path.basename(imageToBeUploaded.filepath)});
+            })
+            .then(wr => {
+                res.json({message: 'Image uploaded successfully'});
+            })
+            .catch(err => {
+                console.error(err);
+                return res.status(500).json({error: err.code});
+            });
+    });
+    // @ts-ignore
+    busboy.end(req.rawBody);
 };
