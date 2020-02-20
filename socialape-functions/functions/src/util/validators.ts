@@ -26,15 +26,15 @@ export const validateSignupData = (req: Request): ValidationResult => {
 
     let errors: LoginErrors = {};
     if (isEmpty(email)) {
-        errors.email = 'Email must not be empty';
+        errors.email = "Email must not be empty";
     }
     else if (!isEmail(email)) {
-        errors.email = 'Must be a valid email address';
+        errors.email = "Must be a valid email address";
     }
 
-    if (isEmpty(password)) errors.password = 'Password must not be empty';
-    if (password !== confirmPassword) errors.confirmPassword = 'Password and confirmation must match';
-    if (isEmpty(handle)) errors.handle = 'Handle must not be empty';
+    if (isEmpty(password)) errors.password = "Password must not be empty";
+    if (password !== confirmPassword) errors.confirmPassword = "Password and confirmation must match";
+    if (isEmpty(handle)) errors.handle = "Handle must not be empty";
 
     return {
         valid: Object.keys(errors).length === 0,
@@ -49,8 +49,8 @@ export const validateLoginData = (req: Request): ValidationResult => {
     const {email, password} = req.body;
 
     let errors: LoginErrors = {};
-    if (isEmpty(email)) errors.email = 'Email must not be empty';
-    if (isEmpty(password)) errors.password = 'Password must not be empty';
+    if (isEmpty(email)) errors.email = "Email must not be empty";
+    if (isEmpty(password)) errors.password = "Password must not be empty";
 
     return {
         valid: Object.keys(errors).length === 0,
@@ -73,7 +73,7 @@ export const reduceUserDetails = (req: Request) => {
     if (!isEmpty(bio)) userDetails.bio = bio.trim();
     if (!isEmpty(website)) {
         // https://website.com
-        if (website.trim().substring(0, 4) !== 'http') {
+        if (website.trim().substring(0, 4) !== "http") {
             userDetails.website = `http://${website.trim()}`;
         }
         else {

@@ -1,11 +1,11 @@
 import * as firebase from "firebase";
 import * as admin from "firebase-admin";
 import {Request, Response} from "express";
-import * as BusBoy from 'busboy'
-import * as path from 'path';
-import * as os from 'os';
-import * as fs from 'fs';
-import * as temp from 'temp';
+import * as BusBoy from "busboy"
+import * as path from "path";
+import * as os from "os";
+import * as fs from "fs";
+import * as temp from "temp";
 import {db} from "../util/admin";
 import {validateLoginData, validateSignupData, reduceUserDetails} from "../util/validators";
 import firebaseConfig from "../firebaseConfig";
@@ -15,13 +15,13 @@ export const signup = (req: Request, res: Response) => {
     const {valid, errors, handle, email, password} = validateSignupData(req);
     if (!valid) return res.status(400).json(errors);
 
-    const noImg = 'no-image.png';
+    const noImg = "no-image.png";
 
     let userToken: string | undefined, userId: string;
     db.doc(`/users/${handle}`).get()
         .then(doc => {
             if (doc.exists) {
-                res.status(400).json({handle: 'this handle is already taken'});
+                res.status(400).json({handle: "this handle is already taken"});
                 return;
             }
             else {
@@ -58,7 +58,7 @@ export const signup = (req: Request, res: Response) => {
         .catch(err => {
             console.error(err);
             if (err.code === "auth/email-already-in-use") {
-                res.status(400).json({error: 'Email is already in use.'});
+                res.status(400).json({error: "Email is already in use."});
             }
             else {
                 res.status(500).json({error: err.code});
@@ -84,7 +84,7 @@ export const login = (req: Request, res: Response) => {
         .catch(err => {
             console.error(err);
             if (err.code === "auth/wrong-password")
-                return res.status(403).json({general: 'Wrong credentials, please try again'});
+                return res.status(403).json({general: "Wrong credentials, please try again"});
             return res.status(500).json({error: err.code});
         });
     return;
@@ -96,7 +96,7 @@ export const addUserDetails = (req: Request, res: Response) => {
     db.doc(`/users/${req.user.handle}`)
         .update(userDetails)
         .then(() => {
-            return res.json({message: 'Details added successfully'});
+            return res.json({message: "Details added successfully"});
         })
         .catch(err => {
             console.error(err);
@@ -130,8 +130,8 @@ export const getAuthenticatedUser = (req: Request, res: Response) => {
                 userData.credentials.createdAt = doc.data().createdAt.toDate();
 
                 return db
-                    .collection('likes')
-                    .where('userHandle', '==', req.user.handle)
+                    .collection("likes")
+                    .where("userHandle", "==", req.user.handle)
                     .get();
             }
             return;
@@ -161,9 +161,9 @@ export const uploadImage = (req: Request, res: Response) => {
 
     let imageToBeUploaded = {filepath: "", mimetype: ""};
 
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
-            res.status(400).json({error: 'Wrong file type'});
+    busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+        if (mimetype !== "image/jpeg" && mimetype !== "image/png") {
+            res.status(400).json({error: "Wrong file type"});
         }
         else {
             const imageExtension = path.extname(filename);
@@ -172,7 +172,7 @@ export const uploadImage = (req: Request, res: Response) => {
             file.pipe(fs.createWriteStream(filepath));
         }
     });
-    busboy.on('finish', () => {
+    busboy.on("finish", () => {
         admin.storage().bucket()
             .upload(imageToBeUploaded.filepath, {
                 resumable: false,
@@ -186,7 +186,7 @@ export const uploadImage = (req: Request, res: Response) => {
                     .update({imageUrl: path.basename(imageToBeUploaded.filepath)});
             })
             .then(wr => {
-                res.json({message: 'Image uploaded successfully'});
+                res.json({message: "Image uploaded successfully"});
             })
             .catch(err => {
                 console.error(err);

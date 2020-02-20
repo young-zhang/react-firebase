@@ -4,8 +4,8 @@ import * as firebase from "firebase";
 import Timestamp = firebase.firestore.Timestamp;
 
 export const getAllScreams = (req: Request, res: Response) => {
-    db.collection('screams')
-        .orderBy('createdAt', 'desc')
+    db.collection("screams")
+        .orderBy("createdAt", "desc")
         .get()
         .then(data => {
             const screams: any = [];
@@ -21,24 +21,24 @@ export const getAllScreams = (req: Request, res: Response) => {
 };
 
 export const postOneScream = (req: Request, res: Response) => {
-    if (req.method !== 'POST') {
-        res.status(400).json({error: 'Method not allowed'});
+    if (req.method !== "POST") {
+        res.status(400).json({error: "Method not allowed"});
     }
     else {
         const {body} = req.body;
         const newScream = {
             body: body,
-            userHandle: req.user['handle'],
+            userHandle: req.user["handle"],
             createdAt: new Date() //.toISOString()
         };
         console.error(newScream);
-        db.collection('screams')
+        db.collection("screams")
             .add(newScream)
             .then(doc => {
                 res.json({message: `document ${doc.id} created successfully`});
             })
             .catch(err => {
-                res.status(500).json({error: 'something went wrong'});
+                res.status(500).json({error: "something went wrong"});
                 console.error(err);
             });
     }
@@ -71,13 +71,13 @@ export const getScream = (req: Request, res: Response) => {
                 screamData.createdAt = doc.data().createdAt.toDate();
                 screamData.screamId = doc.id;
                 return db
-                    .collection('comments')
-                    .orderBy('createdAt', 'desc') // error 9, requires an index
-                    .where('screamId', '==', screamData.screamId)
+                    .collection("comments")
+                    .orderBy("createdAt", "desc") // error 9, requires an index
+                    .where("screamId", "==", screamData.screamId)
                     .get();
             }
             else {
-                res.status(404).json({error: 'Scream not found'});
+                res.status(404).json({error: "Scream not found"});
                 return;
             }
         })
