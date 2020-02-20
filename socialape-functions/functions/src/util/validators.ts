@@ -45,7 +45,7 @@ export const validateSignupData = (req: Request): ValidationResult => {
     };
 };
 
-export const validateLoginData = (req:Request): ValidationResult => {
+export const validateLoginData = (req: Request): ValidationResult => {
     const {email, password} = req.body;
 
     let errors: LoginErrors = {};
@@ -58,4 +58,29 @@ export const validateLoginData = (req:Request): ValidationResult => {
         email,
         password
     };
+};
+
+interface UserDetails {
+    bio?: string
+    website?: string
+    location?: string
+}
+
+export const reduceUserDetails = (req: Request) => {
+    const {bio, website, location} = req.body;
+    let userDetails: UserDetails = {};
+
+    if (!isEmpty(bio)) userDetails.bio = bio.trim();
+    if (!isEmpty(website)) {
+        // https://website.com
+        if (website.trim().substring(0, 4) !== 'http') {
+            userDetails.website = `http://${website.trim()}`;
+        }
+        else {
+            userDetails.website = website.trim();
+        }
+    }
+    if (!isEmpty(location)) userDetails.location = location.trim();
+
+    return userDetails;
 };

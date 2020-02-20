@@ -7,8 +7,9 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as temp from 'temp';
 import {db} from "../util/admin";
-import {validateLoginData, validateSignupData} from "../util/validators";
+import {validateLoginData, validateSignupData, reduceUserDetails} from "../util/validators";
 import firebaseConfig from "../firebaseConfig";
+import Timestamp = firebase.firestore.Timestamp;
 
 export const signup = (req: Request, res: Response) => {
     const {valid, errors, handle, email, password} = validateSignupData(req);
@@ -89,10 +90,72 @@ export const login = (req: Request, res: Response) => {
     return;
 };
 
+// Add user details
+export const addUserDetails = (req: Request, res: Response) => {
+    let userDetails = reduceUserDetails(req);
+    db.doc(`/users/${req.user.handle}`)
+        .update(userDetails)
+        .then(() => {
+            return res.json({message: 'Details added successfully'});
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({error: err.code});
+        })
+};
+
+export interface UserData {
+    credentials: {
+        bio?: string
+        createdAt?: Timestamp | Date
+        email?: string
+        handle?: string
+        imageUrl?: string
+        location?: string
+        userId?: string
+        website?: string
+    }
+    likes: any[]
+}
+
+// get own user details
+export const getAuthenticatedUser = (req: Request, res: Response) => {
+    let userData: UserData = {credentials: {}, likes: []};
+    db.doc(`/users/${req.user.handle}`)
+        .get()
+        .then(doc => {
+            if (doc && doc.exists) {
+                Object.assign(userData.credentials, doc.data());
+                // @ts-ignore
+                userData.credentials.createdAt = doc.data().createdAt.toDate();
+
+                return db
+                    .collection('likes')
+                    .where('userHandle', '==', req.user.handle)
+                    .get();
+            }
+            return;
+        })
+        .then(data => {
+            if (data) {
+                data.forEach(doc => {
+                    userData.likes.push(doc.data())
+                });
+                return res.json(userData);
+            }
+            return;
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({error: err.code});
+        });
+};
+
 const getImageUrl = (filename: string) => {
     return `https://firebasestorage.googleapis.com/v0/b/${firebaseConfig.storageBucket}/o/${filename}?alt=media`;
 };
 
+// Upload a profile image for user
 export const uploadImage = (req: Request, res: Response) => {
     const busboy = new BusBoy({headers: req.headers});
 
