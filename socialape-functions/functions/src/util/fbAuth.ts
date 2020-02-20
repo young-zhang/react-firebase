@@ -17,7 +17,9 @@ export default function (req: Request, res: Response, next: NextFunction) {
                     .get();
             })
             .then(data => {
-                req.user["handle"] = data.docs[0].data().handle;
+                const user = data.docs[0].data();
+                req.user["handle"] = user.handle;
+                req.user["imageUrl"] = user.imageUrl;
                 return next();
             })
             .catch(err => {

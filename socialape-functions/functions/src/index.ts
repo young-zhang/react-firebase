@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as express from "express";
-import {getAllScreams, postOneScream, getScream} from "./handlers/screams";
+import {getAllScreams, postOneScream, getScream, commentOnScream} from "./handlers/screams";
 import {login, signup, addUserDetails, getAuthenticatedUser, uploadImage} from "./handlers/users";
 import fbAuth from "./util/fbAuth";
 
@@ -13,7 +13,7 @@ app.get("/scream/:screamId", getScream);
 // TODO: delete scream
 // TODO: like scream
 // TODO: unlike scream
-// TODO: comment on scream
+app.post("/scream/:screamId/comment", fbAuth, commentOnScream);
 
 // User routes
 app.post("/signup", signup);

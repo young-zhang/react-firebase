@@ -48,6 +48,7 @@ interface Comment {
     commentId?: string
     screamId?: string
     userHandle?: string
+    userImage?: string
     createdAt?: Timestamp | Date
     body?: string
 }
@@ -96,4 +97,43 @@ export const getScream = (req: Request, res: Response) => {
             console.error(err);
             res.status(500).json({error: err.code});
         });
+};
+
+export const commentOnScream = (req: Request, res: Response) => {
+    const {handle, imageUrl} = req.user;
+    const {body} = req.body;
+    const {screamId} = req.params;
+    if (body.trim().len === 0) return res.status(400).json({error: "Must not be empty"});
+
+    let newComment: Comment = {
+        screamId,
+        userHandle: handle,
+        userImage: imageUrl,
+        createdAt: new Date(),
+        body,
+    };
+
+    db.doc(`/screams/${screamId}`)
+        .get()
+        .then(doc => {
+            if (doc && doc.exists) {
+                return db
+                    .collection("comments")
+                    .add(newComment);
+            }
+            else {
+                res.status(404).json({error: "Scream not found"});
+                return;
+            }
+        })
+        .then(()=>{
+            // doc created successfully
+            res.json(newComment);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({error: err.code});
+        });
+
+    return;
 };
