@@ -234,3 +234,30 @@ const updateLikes = (req: Request, res: Response, action: "like" | "unlike") => 
 
 export const likeScream = (req: Request, res: Response) => updateLikes(req, res, "like");
 export const unlikeScream = (req: Request, res: Response) => updateLikes(req, res, "unlike");
+
+export const deleteScream = (req: Request, res: Response) => {
+    const {handle, imageUrl} = req.user;
+    const {screamId} = req.params;
+    const document = db.doc(`/screams/${screamId}`);
+    document.get()
+        .then(doc => {
+            if (!doc) return;
+            if (!doc.exists) {
+                res.status(404).json({error: "Scream not found"});
+                return;
+            }
+            // @ts-ignore
+            if (doc.data().userHandle !== handle) {
+                res.status(403).json({error: "Unauthorized"});
+                return;
+            }
+            return document.delete();
+        })
+        .then(() => {
+            res.json({message: "Scream deleted successflly"});
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({error: err.code});
+        })
+};
