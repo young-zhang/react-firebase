@@ -99,10 +99,15 @@ export const uploadImage = (req: Request, res: Response) => {
     let imageToBeUploaded = {filepath: "", mimetype: ""};
 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        const imageExtension = path.extname(filename);
-        let filepath = temp.path({suffix: imageExtension});
-        imageToBeUploaded = {filepath, mimetype};
-        file.pipe(fs.createWriteStream(filepath));
+        if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
+            res.status(400).json({error: 'Wrong file type'});
+        }
+        else {
+            const imageExtension = path.extname(filename);
+            let filepath = temp.path({suffix: imageExtension});
+            imageToBeUploaded = {filepath, mimetype};
+            file.pipe(fs.createWriteStream(filepath));
+        }
     });
     busboy.on('finish', () => {
         admin.storage().bucket()
