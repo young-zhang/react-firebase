@@ -3,13 +3,12 @@ import * as admin from "firebase-admin";
 import {Request, Response} from "express";
 import * as BusBoy from "busboy"
 import * as path from "path";
-import * as os from "os";
 import * as fs from "fs";
 import * as temp from "temp";
 import {db} from "../util/admin";
 import {validateLoginData, validateSignupData, reduceUserDetails} from "../util/validators";
 import firebaseConfig from "../firebaseConfig";
-import Timestamp = firebase.firestore.Timestamp;
+import {User, Notification, Scream} from "../types";
 
 export const signup = (req: Request, res: Response) => {
     const {valid, errors, handle, email, password} = validateSignupData(req);
@@ -22,7 +21,7 @@ export const signup = (req: Request, res: Response) => {
         .then(doc => {
             if (doc.exists) {
                 res.status(400).json({handle: "this handle is already taken"});
-                return;
+                return null;
             }
             else {
                 return firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -33,27 +32,21 @@ export const signup = (req: Request, res: Response) => {
                 userId = data.user.uid;
                 return data.user.getIdToken();
             }
-            return;
+            return null;
         })
         .then(token => {
-            if (token) {
-                userToken = token;
-                const userCredentials = {
-                    handle,
-                    email,
-                    createdAt: new Date(), //.toISOString(),
-                    imageUrl: noImg,
-                    userId
-                };
-                return db.doc(`/users/${handle}`).set(userCredentials);
-            }
-            return;
+            userToken = token;
+            const userCredentials = {
+                handle,
+                email,
+                createdAt: new Date(), //.toISOString(),
+                imageUrl: noImg,
+                userId
+            };
+            return db.doc(`/users/${handle}`).set(userCredentials);
         })
         .then(writeResult => {
-            if (writeResult) {
-                return res.status(201).json({token: userToken});
-            }
-            return;
+            return res.status(201).json({token: userToken});
         })
         .catch(err => {
             console.error(err);
@@ -61,10 +54,10 @@ export const signup = (req: Request, res: Response) => {
                 res.status(400).json({error: "Email is already in use."});
             }
             else {
-                res.status(500).json({error: err.code});
+                res.status(500).json({general: "Something went wrong, please try again"});
             }
         });
-    return;
+    return null;
 };
 
 export const login = (req: Request, res: Response) => {
@@ -74,12 +67,10 @@ export const login = (req: Request, res: Response) => {
     firebase.auth()
         .signInWithEmailAndPassword(email, password)
         .then(cred => {
-            if (cred && cred.user) return cred.user.getIdToken();
-            return;
+            return cred.user.getIdToken();
         })
         .then(token => {
-            if (token) return res.status(200).json({token});
-            return;
+            res.status(200).json({token});
         })
         .catch(err => {
             console.error(err);
@@ -87,7 +78,7 @@ export const login = (req: Request, res: Response) => {
                 return res.status(403).json({general: "Wrong credentials, please try again"});
             return res.status(500).json({error: err.code});
         });
-    return;
+    return null;
 };
 
 // Add user details
@@ -104,29 +95,50 @@ export const addUserDetails = (req: Request, res: Response) => {
         })
 };
 
-export interface UserData {
-    credentials: {
-        bio?: string
-        createdAt?: Timestamp | Date
-        email?: string
-        handle?: string
-        imageUrl?: string
-        location?: string
-        userId?: string
-        website?: string
-    }
-    likes: any[]
-}
+// get any user's details
+export const getUserDetails = (req: Request, res: Response) => {
+    const {handle} = req.params;
+    let userData: User = {credentials: {}, screams: [], likes: []};
+    db.doc(`/users/${handle}`)
+        .get()
+        .then(doc => {
+            if (doc.exists) {
+                Object.assign(userData.credentials, doc.data());
+                userData.credentials.createdAt = doc.data().createdAt.toDate();
+                return db.collection("screams")
+                    .where("userHandle", "==", handle)
+                    .orderBy("createdAt", "desc")
+                    .get();
+            }
+            else {
+                res.status(404).json({error: "User not found"});
+                return null;
+            }
+        })
+        .then(data => {
+            data.forEach(doc => {
+                let scream: Scream = {comments: []};
+                Object.assign(scream, doc.data());
+                scream.createdAt = doc.data().createdAt.toDate();
+                userData.screams.push(scream);
+            });
+            return res.json(userData);
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({error: err.code});
+        });
+};
 
 // get own user details
 export const getAuthenticatedUser = (req: Request, res: Response) => {
-    let userData: UserData = {credentials: {}, likes: []};
+    const {handle, imageUrl} = req.user;
+    let userData: User = {credentials: {}, likes: []};
     db.doc(`/users/${req.user.handle}`)
         .get()
         .then(doc => {
             if (doc && doc.exists) {
                 Object.assign(userData.credentials, doc.data());
-                // @ts-ignore
                 userData.credentials.createdAt = doc.data().createdAt.toDate();
 
                 return db
@@ -134,16 +146,27 @@ export const getAuthenticatedUser = (req: Request, res: Response) => {
                     .where("userHandle", "==", req.user.handle)
                     .get();
             }
-            return;
+            return null;
         })
         .then(data => {
-            if (data) {
-                data.forEach(doc => {
-                    userData.likes.push(doc.data())
-                });
-                return res.json(userData);
-            }
-            return;
+            data.forEach(doc => userData.likes.push(doc.data()));
+            return db
+                .collection("notifications")
+                .where("recipient", "==", handle)
+                .orderBy("createdAt", "desc")
+                .limit(10)
+                .get();
+        })
+        .then(data => {
+            userData.notifications = []
+            data.forEach(doc => {
+                let notification: Notification = {};
+                notification.createdAt = doc.data().createdAt.toDate();
+                notification.notificationId = doc.id;
+                Object.assign(notification, doc.data());
+                userData.notifications.push(notification);
+            });
+            return res.json(userData);
         })
         .catch(err => {
             console.error(err);
@@ -195,4 +218,22 @@ export const uploadImage = (req: Request, res: Response) => {
     });
     // @ts-ignore
     busboy.end(req.rawBody);
+};
+
+export const markNotificationsRead = (req: Request, res: Response) => {
+    const {handle, imageUrl} = req.user;
+    let batch = db.batch();
+    // @ts-ignore
+    req.body.forEach(notifyId => {
+        const notification = db.doc(`/notifications/${notifyId}`);
+        batch.update(notification, {read: true});
+    });
+    batch.commit()
+        .then(() => {
+            return res.json({message: "Notifications marked read"});
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({error: err.code});
+        });
 };

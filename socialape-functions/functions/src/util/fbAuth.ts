@@ -26,7 +26,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
                 console.error("Error while verifying token ", err);
                 return res.status(403).json(err);
             });
-        return;
+        return null;
     }
     else {
         console.error("No token found");

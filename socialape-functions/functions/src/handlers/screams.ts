@@ -1,33 +1,6 @@
 import {Request, Response} from "express";
 import {db} from "../util/admin";
-import * as firebase from "firebase";
-import Timestamp = firebase.firestore.Timestamp;
-import {object} from "firebase-functions/lib/providers/storage";
-
-interface Comment {
-    commentId?: string
-    screamId?: string
-    userHandle?: string
-    userImage?: string
-    createdAt?: Timestamp | Date
-    body?: string
-}
-
-interface Scream {
-    screamId?: string
-    createdAt?: Timestamp | Date
-    userHandle?: string
-    userImage?: string
-    body?: string
-    likeCount?: number
-    commentCount?: number
-    comments: Comment[]
-}
-
-interface Like {
-    screamId?: string
-    userHandle?: string
-}
+import {Scream, Comment, Like} from "../types";
 
 export const getAllScreams = (req: Request, res: Response) => {
     db.collection("screams")
@@ -36,15 +9,10 @@ export const getAllScreams = (req: Request, res: Response) => {
         .then(data => {
             const screams: Scream[] = [];
             data.forEach(doc => {
-                const {body, createdAt, userHandle, imageUrl} = doc.data();
-                let scream: Scream = {
-                    screamId: doc.id,
-                    body,
-                    createdAt: createdAt.toDate(),
-                    userHandle,
-                    userImage: imageUrl,
-                    comments: []
-                };
+                let scream: Scream = {comments: []};
+                Object.assign(scream, doc.data());
+                scream.createdAt = doc.data().createdAt.toDate();
+                scream.screamId = doc.id;
                 screams.push(scream);
             });
             return res.json(screams);
@@ -88,7 +56,6 @@ export const getScream = (req: Request, res: Response) => {
         .then(doc => {
             if (doc.exists) {
                 Object.assign(screamData, doc.data());
-                // @ts-ignore
                 screamData.createdAt = doc.data().createdAt.toDate();
                 screamData.screamId = doc.id;
                 return db
@@ -99,11 +66,10 @@ export const getScream = (req: Request, res: Response) => {
             }
             else {
                 res.status(404).json({error: "Scream not found"});
-                return;
+                return null;
             }
         })
         .then(data => {
-            // @ts-ignore
             data.forEach(doc => {
                 let comment: Comment = {};
                 Object.assign(comment, doc.data());
@@ -137,14 +103,13 @@ export const commentOnScream = (req: Request, res: Response) => {
         .get()
         .then(doc => {
             if (doc && doc.exists) {
-                // @ts-ignore
                 let commentCount = doc.data().commentCount && doc.data().commentCount > 0 ? doc.data().commentCount : 0;
                 commentCount++;
                 return doc.ref.update({commentCount});
             }
             else {
                 res.status(404).json({error: "Scream not found"});
-                return;
+                return null;
             }
         })
         .then(() => {
@@ -161,7 +126,7 @@ export const commentOnScream = (req: Request, res: Response) => {
             res.status(500).json({error: err.code});
         });
 
-    return;
+    return null;
 };
 
 const updateLikes = (req: Request, res: Response, action: "like" | "unlike") => {
@@ -179,7 +144,6 @@ const updateLikes = (req: Request, res: Response, action: "like" | "unlike") => 
         .then(doc => {
             if (doc && doc.exists) {
                 Object.assign(screamData, doc.data());
-                // @ts-ignore
                 screamData.createdAt = doc.data().createdAt.toDate();
                 if (!screamData.likeCount) screamData.likeCount = 0;
                 if (!screamData.commentCount) screamData.commentCount = 0;
@@ -187,15 +151,16 @@ const updateLikes = (req: Request, res: Response, action: "like" | "unlike") => 
             }
             else {
                 res.status(404).json({error: "Scream not found"});
-                return;
+                return null;
             }
         })
         .then(data => { // data should contain a like document
             if (!data) return;
             let likeCount = (screamData && screamData.likeCount) ? screamData.likeCount : 0;
             if (action == "like" && data.empty) {
+                const like: Like = {screamId, userHandle: handle};
                 db.collection("likes")
-                    .add({screamId, userHandle: handle})
+                    .add(like)
                     .then(() => {
                         likeCount++;
                         return screamDocument.update({likeCount});
@@ -241,15 +206,13 @@ export const deleteScream = (req: Request, res: Response) => {
     const document = db.doc(`/screams/${screamId}`);
     document.get()
         .then(doc => {
-            if (!doc) return;
             if (!doc.exists) {
                 res.status(404).json({error: "Scream not found"});
-                return;
+                return null;
             }
-            // @ts-ignore
             if (doc.data().userHandle !== handle) {
                 res.status(403).json({error: "Unauthorized"});
-                return;
+                return null;
             }
             return document.delete();
         })
