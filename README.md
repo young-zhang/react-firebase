@@ -108,6 +108,8 @@ npm install --save react-router-dom
 npm install @types/react-router-dom
 ```
 
+[4:34:12](https://youtu.be/m_u6P5k0vP0?t=16452) `npm install -save @material-ui/core`
+
 ---
 
 ## Misc Resources
