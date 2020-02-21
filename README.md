@@ -109,6 +109,7 @@ npm install @types/react-router-dom
 ```
 
 [4:34:12](https://youtu.be/m_u6P5k0vP0?t=16452) `npm install -save @material-ui/core`
+[4:51:02](https://youtu.be/m_u6P5k0vP0?t=17462) `npm install --save axios`
 
 ---
 
@@ -117,3 +118,4 @@ npm install @types/react-router-dom
 - [You Don't Know JS](https://github.com/getify/You-Dont-Know-JS)
 - [What the heck is the event loop anyway?](https://youtu.be/8aGhZQkoFbQ)
 - [TypeScript Resources](https://github.com/nairobijs/Typescript-Resources)
+- [Plain JavaScript vs React](https://www.robinwieruch.de/why-frameworks-matter)
