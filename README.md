@@ -99,6 +99,11 @@ For now, one can simply use:
 busboy.end(req.rawBody);
 ```
 
+[4:26:33](https://youtu.be/m_u6P5k0vP0?t=15993) `npm install -g create-react-app`, then
+`create-react-app socialape-client --template typescript`
+
+[4:31:00](https://youtu.be/m_u6P5k0vP0?t=16260) `npm install --save react-router-dom`
+
 ---
 
 ## Misc Resources
