@@ -124,26 +124,30 @@ a lightweight alternative to [momentjs](https://momentjs.com/).
 - [TypeScript Resources](https://github.com/nairobijs/Typescript-Resources)
 - [Plain JavaScript vs React](https://www.robinwieruch.de/why-frameworks-matter)
 - [React app sample with TypeScript](https://github.com/mui-org/material-ui/tree/master/examples/create-react-app-with-typescript)
-- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/). Basically, to use `withStyles` in TypeScript,
-styles should be created like this:
+- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/). 
+
+To use `withStyles` with `withRouter` in TypeScript,
+the component should be created like this:
 ```
 import {createStyles} from "@material-ui/core";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 
 const styles = createStyles({
     // styles
 }
-```
-Properties should be defined as thus:
-```
-import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 
-interface Props extends WithStyles<typeof styles>{
-    // other properties
+interface Props {
+    // properties
 }
-```
-and exported like this:
-```
-import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 
-export default withStyles(styles)(Scream);
+interface State {
+    // states
+}
+
+class CustomComponent extends Component<Props & RouteComponentProps<Props> & WithStyles<typeof styles>, State> {
+    // ...
+}
+
+export default withStyles(styles)(withRouter(CustomComponent));
 ```

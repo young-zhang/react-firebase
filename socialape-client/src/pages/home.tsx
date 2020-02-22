@@ -12,9 +12,7 @@ export default class Home extends Component<{}, { screams: IScream[] }> {
 
     componentDidMount(): void {
         Axios.get("/screams")
-            .then(res => {
-                this.setState({screams: res.data});
-            });
+            .then(res => { this.setState({screams: res.data}); });
     }
 
     render() {
