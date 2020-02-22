@@ -109,7 +109,11 @@ npm install @types/react-router-dom
 ```
 
 [4:34:12](https://youtu.be/m_u6P5k0vP0?t=16452) `npm install -save @material-ui/core`
+
 [4:51:02](https://youtu.be/m_u6P5k0vP0?t=17462) `npm install --save axios`
+
+[5:14:08](https://youtu.be/m_u6P5k0vP0?t=18848) `npm install --save dayjs` [dayjs](https://github.com/iamkun/dayjs) is
+a lightweight alternative to [momentjs](https://momentjs.com/).
 
 ---
 
@@ -119,3 +123,27 @@ npm install @types/react-router-dom
 - [What the heck is the event loop anyway?](https://youtu.be/8aGhZQkoFbQ)
 - [TypeScript Resources](https://github.com/nairobijs/Typescript-Resources)
 - [Plain JavaScript vs React](https://www.robinwieruch.de/why-frameworks-matter)
+- [React app sample with TypeScript](https://github.com/mui-org/material-ui/tree/master/examples/create-react-app-with-typescript)
+- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/). Basically, to use `withStyles` in TypeScript,
+styles should be created like this:
+```
+import {createStyles} from "@material-ui/core";
+
+const styles = createStyles({
+    // styles
+}
+```
+Properties should be defined as thus:
+```
+import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
+
+interface Props extends WithStyles<typeof styles>{
+    // other properties
+}
+```
+and exported like this:
+```
+import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
+
+export default withStyles(styles)(Scream);
+```
