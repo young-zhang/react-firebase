@@ -54,7 +54,7 @@ export const signup = (req: Request, res: Response) => {
                 res.status(400).json({error: "Email is already in use."});
             }
             else {
-                res.status(500).json({general: "Something went wrong, please try again"});
+                res.status(500).json({error: err.code});
             }
         });
     return null;

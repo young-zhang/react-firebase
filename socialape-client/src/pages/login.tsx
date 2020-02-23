@@ -1,38 +1,12 @@
 import * as React from "react";
 import {Component} from "react";
-import {Button, CircularProgress, createStyles, Grid, TextField, Typography} from "@material-ui/core";
+import {Button, CircularProgress, Grid, TextField, Typography} from "@material-ui/core";
 import AppIcon from "../images/icon.png";
 import {FormEventHandler} from "react";
 import Axios from "axios";
 import {RouteComponentProps, withRouter, Link} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
-
-const styles = createStyles({
-    form: {
-        textAlign: "center"
-    },
-    image: {
-        margin: "20px auto 20px auto"
-    },
-    pageTitle: {
-        margin: "10px auto 10px auto"
-    },
-    textField: {
-        margin: "10px auto 10px auto"
-    },
-    button: {
-        marginTop: 20,
-        marginBottom: 20,
-        position: "relative"
-    },
-    customError: {
-        color: "red",
-        fontSize: "0.8rem"
-    },
-    progress: {
-        position: "absolute"
-    },
-});
+import styles from "../utils/styles";
 
 interface State {
     email: string
@@ -63,7 +37,9 @@ class Login extends Component<Props & RouteComponentProps<Props> & WithStyles<ty
         const {email, password} = this.state;
         Axios.post("/login", {email, password})
             .then(res => {
-                console.log(res);
+                console.log(res.data);
+                const {token} = res.data;
+                localStorage.setItem("fbIdToken", `Bearer ${token}`);
                 this.setState({loading: false});
                 this.props.history.push("/");
             })
@@ -100,7 +76,7 @@ class Login extends Component<Props & RouteComponentProps<Props> & WithStyles<ty
                                    error={!!err.email}
                                    helperText={err.email}
                                    onChange={this.handleChange} fullWidth />
-                        <TextField id="password" name="password" type="password" label="password"
+                        <TextField id="password" name="password" type="password" label="Password"
                                    className={classes.textField}
                                    value={password}
                                    error={!!err.password}

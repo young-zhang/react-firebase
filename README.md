@@ -1,6 +1,11 @@
 # Full Stack React &amp; Firebase Tutorial
 
-This repo follows the YouTube video [Full Stack & Firebase Tutorial - Build a social media app](https://youtu.be/m_u6P5k0vP0?t=1)
+This repo follows [Classed](https://www.youtube.com/channel/UC2-slOJImuSc20Drbf88qvg)'s tutorial series: 
+[Full Stack & Firebase Tutorial - Build a social media app](https://www.youtube.com/watch?v=RkBfu-W7tt0&list=PLMhAeHCz8S38ryyeMiBPPUnFAiWnoPvWP),
+which is also available [here as one single video](https://youtu.be/m_u6P5k0vP0).
+The JavaScript repos for the [Firebase Functions](https://github.com/hidjou/classsed-react-firebase-functions)
+and [React Client](https://github.com/hidjou/classsed-react-firebase-client) can be perused to see what differences exist
+between my TypeScript and the instructor's JavaScript implementations.
 
 ## After cloning the repo
 Create a file  `/socialape-functions/functions/src/firebaseConfig.ts` and fill it with your webapp config:
@@ -115,6 +120,16 @@ npm install @types/react-router-dom
 [5:14:08](https://youtu.be/m_u6P5k0vP0?t=18848) `npm install --save dayjs` [dayjs](https://github.com/iamkun/dayjs) is
 a lightweight alternative to [momentjs](https://momentjs.com/).
 
+[5:58:42](https://youtu.be/m_u6P5k0vP0?t=21522) `npm install --save jwt-decode @types/jwt-decode`
+
+[6:03:29](https://youtu.be/m_u6P5k0vP0?t=21809) How to [use spread properties in Typescript+React](https://stackoverflow.com/questions/40326224/typescript-equivalent-of-rest-spread-props-in-react-stateless-component),
+and [Typescript - how to omit properties so a subset can be transferred with spread?](https://stackoverflow.com/questions/52195740/typescript-how-to-omit-properties-so-a-subset-can-be-transferred-with-spread)
+
+[#18](https://youtu.be/fjWk7cZFxoM?list=PLMhAeHCz8S38ryyeMiBPPUnFAiWnoPvWP) Redux Setup:
+[What Does Redux Do? (and when should you use it?)](https://daveceddia.com/what-does-redux-do/) and
+[Immutability in JavaScript using Redux](https://www.toptal.com/javascript/immutability-in-javascript-using-redux)
+
+
 ---
 
 ## Misc Resources
@@ -123,8 +138,15 @@ a lightweight alternative to [momentjs](https://momentjs.com/).
 - [What the heck is the event loop anyway?](https://youtu.be/8aGhZQkoFbQ)
 - [TypeScript Resources](https://github.com/nairobijs/Typescript-Resources)
 - [Plain JavaScript vs React](https://www.robinwieruch.de/why-frameworks-matter)
+- [React vs Vue](https://www.mindk.com/blog/react-vs-vue/)
 - [React app sample with TypeScript](https://github.com/mui-org/material-ui/tree/master/examples/create-react-app-with-typescript)
-- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/). 
+- [React Router Introduction](https://youtu.be/cKnc8gXn80Q)
+- [Protected routes and authentication with React Router v4](https://youtu.be/ojYbcon588A)
+- [How to Use React Router in Typescript](https://www.pluralsight.com/guides/react-router-typescript)
+- [React Typescript Tutorial](https://youtu.be/Z5iWr6Srsj8)
+- [TypeScript and React: Children](https://fettblog.eu/typescript-react/children/)
+- [React children composition patterns with TypeScript](https://medium.com/@martin_hotell/react-children-composition-patterns-with-typescript-56dfc8923c64)
+- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/)
 
 To use `withStyles` with `withRouter` in TypeScript,
 the component should be created like this:
