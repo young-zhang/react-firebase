@@ -3,7 +3,7 @@ import {Component} from "react";
 import {Grid} from "@material-ui/core";
 import Axios from "axios";
 import Scream from "../components/Scream";
-import {IScream} from "../types";
+import {Scream as IScream} from "../types";
 
 export default class Home extends Component<{}, { screams: IScream[] }> {
     state = {

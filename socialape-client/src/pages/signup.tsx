@@ -27,7 +27,7 @@ interface State {
 interface Props {
 }
 
-class Signup extends Component<Props & RouteComponentProps<Props> & WithStyles<typeof styles>, State> {
+class Signup extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
     state = {
         email: "",
         password: "",

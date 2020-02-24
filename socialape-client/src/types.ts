@@ -8,12 +8,57 @@ export const getUrl = (filename: string | undefined) => {
     return url;
 };
 
-export interface IScream {
-    "comments"?: any[],
-    "likeCount"?: number,
-    "body": string,
-    "imageUrl"?: string,
-    "createdAt": Date,
-    "userHandle": string,
-    "screamId": string
+export interface Credentials {
+    bio?: string
+    createdAt?: Date
+    email?: string
+    handle?: string
+    imageUrl?: string
+    location?: string
+    userId?: string
+    website?: string
 }
+
+export interface User {
+    credentials: Credentials
+    likes?: any[]
+    screams?: Scream[]
+    notifications?: Notification[]
+}
+
+export interface Scream {
+    screamId?: string
+    createdAt?: Date
+    userHandle?: string
+    imageUrl?: string
+    userImage?: string
+    body?: string
+    likeCount?: number
+    commentCount?: number
+    comments?: Comment[]
+}
+
+export interface Comment {
+    commentId?: string
+    screamId?: string
+    userHandle?: string
+    userImage?: string
+    createdAt?: Date
+    body?: string
+}
+
+export interface Like {
+    screamId?: string
+    userHandle?: string
+}
+
+export interface Notification {
+    recipient?: string,
+    sender?: string,
+    read?: boolean,
+    screamId?: string,
+    type?: "like" | "comment",
+    createdAt?: Date
+    notificationId?: string
+}
+

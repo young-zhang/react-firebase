@@ -3,15 +3,19 @@ import {Component} from "react";
 import {Button, CircularProgress, Grid, TextField, Typography} from "@material-ui/core";
 import AppIcon from "../images/icon.png";
 import {FormEventHandler} from "react";
-import Axios from "axios";
 import {RouteComponentProps, withRouter, Link} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import styles from "../utils/styles";
+import {connect} from "react-redux";
+import {ApplicationState} from "../redux/store";
+import {Dispatch} from "redux";
+import {loginUser, UserLoginData} from "../redux/actions/userActions";
+import {UserState} from "../redux/reducers/userReducer";
+import {UiState} from "../redux/reducers/uiReducer";
 
 interface State {
     email: string
     password: string
-    loading: boolean
     err: {
         email: string | null
         password: string | null
@@ -21,46 +25,33 @@ interface State {
 }
 
 interface Props {
+    loginUser: typeof loginUser
+    user: UserState
+    UI: UiState
 }
 
-class Login extends Component<Props & RouteComponentProps<Props> & WithStyles<typeof styles>, State> {
+class Login extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
     state = {
         email: "",
         password: "",
-        loading: false,
         err: {email: null, password: null, error: null, general: null},
     };
 
     handleSubmit: FormEventHandler = (event) => {
         event.preventDefault();
-        this.setState({loading: true});
         const {email, password} = this.state;
-        Axios.post("/login", {email, password})
-            .then(res => {
-                console.log(res.data);
-                const {token} = res.data;
-                localStorage.setItem("fbIdToken", `Bearer ${token}`);
-                this.setState({loading: false});
-                this.props.history.push("/");
-            })
-            .catch(err => {
-                this.setState({
-                    err: err.response.data,
-                    loading: false
-                });
-                //console.log(this.state.err);
-            });
+        this.props.loginUser({email, password}, this.props.history);
     };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         // @ts-ignore
         this.setState({[event.target.name]: event.target.value});
-        //console.log(this.state);
     };
+    private loading: any;
 
     render() {
-        const {classes} = this.props;
-        const {email, password, err, loading} = this.state;
+        const {classes, UI: {loading}} = this.props;
+        const {email, password, err} = this.state;
         return (
             <Grid container className={classes.form}>
                 <Grid item sm />
@@ -88,7 +79,7 @@ class Login extends Component<Props & RouteComponentProps<Props> & WithStyles<ty
                                 {err.error}
                             </Typography>
                         )}
-                        <Button type="submit" variant="contained" color="primary" disabled={loading} className={classes.button}>
+                        <Button type="submit" variant="contained" color="primary" disabled={this.loading} className={classes.button}>
                             LOGIN
                             {loading && (
                                 <CircularProgress size={30} className={classes.progress} />
@@ -104,4 +95,18 @@ class Login extends Component<Props & RouteComponentProps<Props> & WithStyles<ty
     }
 }
 
-export default withStyles(styles)(withRouter(Login));
+const mapStateToProps = (state: ApplicationState) => ({
+    user: state.user,
+    UI: state.UI
+});
+
+function mapDispatchToProps(dispatch: Dispatch) {
+    return {
+        loginUser: (userData: UserLoginData, history: any) =>
+            // @ts-ignore
+            dispatch(loginUser(userData, history))
+    };
+}
+
+// @ts-ignore
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(withRouter(Login)));

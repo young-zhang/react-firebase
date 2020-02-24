@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Component} from "react";
-import {getUrl, IScream} from "../types";
+import {getUrl, Scream as IScream} from "../types";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {Card, CardContent, CardMedia, createStyles, Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";

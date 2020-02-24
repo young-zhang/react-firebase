@@ -127,8 +127,12 @@ and [Typescript - how to omit properties so a subset can be transferred with spr
 
 [#18](https://youtu.be/fjWk7cZFxoM?list=PLMhAeHCz8S38ryyeMiBPPUnFAiWnoPvWP) Redux Setup:
 [What Does Redux Do? (and when should you use it?)](https://daveceddia.com/what-does-redux-do/) and
-[Immutability in JavaScript using Redux](https://www.toptal.com/javascript/immutability-in-javascript-using-redux)
-
+[Immutability in JavaScript using Redux](https://www.toptal.com/javascript/immutability-in-javascript-using-redux). Also
+[Usage with TypeScript](https://redux.js.org/recipes/usage-with-typescript/). And
+[Use Redux Devtools Extension Package from NPM](https://github.com/zalmoxisus/redux-devtools-extension#13-use-redux-devtools-extension-package-from-npm)
+```
+npm install --save redux react-redux redux-thunk @types/react-redux
+```
 
 ---
 
@@ -142,11 +146,15 @@ and [Typescript - how to omit properties so a subset can be transferred with spr
 - [React app sample with TypeScript](https://github.com/mui-org/material-ui/tree/master/examples/create-react-app-with-typescript)
 - [React Router Introduction](https://youtu.be/cKnc8gXn80Q)
 - [Protected routes and authentication with React Router v4](https://youtu.be/ojYbcon588A)
-- [How to Use React Router in Typescript](https://www.pluralsight.com/guides/react-router-typescript)
 - [React Typescript Tutorial](https://youtu.be/Z5iWr6Srsj8)
+- [How to Use React Router in Typescript](https://www.pluralsight.com/guides/react-router-typescript)
 - [TypeScript and React: Children](https://fettblog.eu/typescript-react/children/)
 - [React children composition patterns with TypeScript](https://medium.com/@martin_hotell/react-children-composition-patterns-with-typescript-56dfc8923c64)
-- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/)
+- [Example Code for Use of Strong Typing in Redx](https://github.com/alexzywiak/react-redux-typescript) and an [explanation](https://alexzywiak.github.io/react-redux-with-typescript/index.html).
+- [Using TypeScript With Material UI](https://material-ui.com/guides/typescript/).
+- [Getting Started With Redux and TypeScript](https://rjzaworski.com/2016/08/getting-started-with-redux-and-typescript) and [repo](https://github.com/rjz/typescript-react-redux).
+- [Strongly-typed React Redux Code with TypeScript](https://www.carlrippon.com/strongly-typed-react-redux-code-with-typescript/)
+- [React & Redux in TypeScript](https://github.com/piotrwitek/react-redux-typescript-guide)
 
 To use `withStyles` with `withRouter` in TypeScript,
 the component should be created like this:
