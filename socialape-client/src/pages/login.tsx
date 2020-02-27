@@ -37,6 +37,11 @@ class Login extends Component<Props & RouteComponentProps & WithStyles<typeof st
         err: {email: null, password: null, error: null, general: null},
     };
 
+    UNSAFE_componentWillReceiveProps(nextProps: Readonly<Props & RouteComponentProps & WithStyles<typeof styles>>, nextContext: any): void {
+        if (nextProps.UI.errors)
+            this.setState({err: nextProps.UI.errors});
+    }
+
     handleSubmit: FormEventHandler = (event) => {
         event.preventDefault();
         const {email, password} = this.state;
