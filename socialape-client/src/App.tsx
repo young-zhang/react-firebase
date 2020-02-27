@@ -11,18 +11,23 @@ import Signup from "./pages/signup";
 import Navbar from "./components/Navbar";
 import AuthRoute from "./utils/AuthRoute";
 import store from "./redux/store"
+import {setAuthenticated, setUnauthenticated} from "./redux/reducers/userReducer";
+import {getUserData} from "./redux/actions/userActions";
+import Axios from "axios";
 
 const token = localStorage.getItem("fbIdToken");
-let authenticated: boolean;
+
 if (token) {
     const decodedToken: any = JwtDecode(token);
     console.log(decodedToken);
     if (decodedToken.exp * 1000 < Date.now()) {
-        authenticated = false;
-        //window.location.href = "/login";
+        store.dispatch(setUnauthenticated());
+        window.location.href = "/login";
     }
     else {
-        authenticated = true;
+        store.dispatch(setAuthenticated());
+        Axios.defaults.headers.common["Authorization"] = token;
+        store.dispatch(getUserData());
     }
 }
 
@@ -35,8 +40,8 @@ function App() {
                     <div className="container">
                         <Switch>
                             <Route exact path="/" component={Home} />
-                            <AuthRoute authenticated={authenticated} exact path="/login" component={Login} />
-                            <AuthRoute authenticated={authenticated} exact path="/signup" component={Signup} />
+                            <AuthRoute exact path="/login" component={Login} />
+                            <AuthRoute exact path="/signup" component={Signup} />
                         </Switch>
                     </div>
                 </BrowserRouter>

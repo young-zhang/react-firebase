@@ -1,13 +1,15 @@
 import React from "react";
-import {Redirect, Route} from "react-router-dom";
+import {Redirect, Route, withRouter} from "react-router-dom";
 import {RouteComponentProps, RouteProps} from "react-router";
+import {ApplicationState} from "../redux/store";
+import {connect} from "react-redux";
 
 interface P {
     component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>
     authenticated: boolean
 }
 
-const AuthRoute: React.FC<P & RouteProps> = ({component: Component, authenticated, ...rest}) => (
+const AuthRoute: React.FC<P & RouteProps & RouteComponentProps> = ({component: Component, authenticated, ...rest}) => (
     <Route
         {...rest}
         // @ts-ignore
@@ -15,4 +17,9 @@ const AuthRoute: React.FC<P & RouteProps> = ({component: Component, authenticate
     />
 );
 
-export default AuthRoute;
+const mapStateToProps = (state: ApplicationState) => ({
+    authenticated: state.user.authenticated
+});
+
+// @ts-ignore
+export default connect(mapStateToProps)(withRouter(AuthRoute));

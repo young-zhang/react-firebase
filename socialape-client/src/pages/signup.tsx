@@ -3,17 +3,20 @@ import {Component} from "react";
 import {Button, CircularProgress, Grid, TextField, Typography} from "@material-ui/core";
 import AppIcon from "../images/icon.png";
 import {FormEventHandler} from "react";
-import Axios from "axios";
 import {RouteComponentProps, withRouter, Link} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import styles from "../utils/styles";
+import {ApplicationState} from "../redux/store";
+import {NewUserData, signupUser} from "../redux/actions/userActions";
+import {connect} from "react-redux";
+import {UserState} from "../redux/reducers/userReducer";
+import {UiState} from "../redux/reducers/uiReducer";
 
 interface State {
     email: string
     password: string
     confirmPassword: string
     handle: string
-    loading: boolean
     err: {
         email: string | null
         password: string | null
@@ -25,6 +28,9 @@ interface State {
 }
 
 interface Props {
+    signupUser: typeof signupUser
+    user: UserState
+    UI: UiState
 }
 
 class Signup extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
@@ -33,44 +39,30 @@ class Signup extends Component<Props & RouteComponentProps & WithStyles<typeof s
         password: "",
         confirmPassword: "",
         handle: "",
-        loading: false,
         err: {email: null, password: null, confirmPassword: null, handle: null, error: null, general: null},
     };
 
+    UNSAFE_componentWillReceiveProps(nextProps: Readonly<Props & RouteComponentProps & WithStyles<typeof styles>>, nextContext: any): void {
+        if (nextProps.UI.errors)
+            this.setState({err: nextProps.UI.errors});
+    }
+
     handleSubmit: FormEventHandler = (event) => {
         event.preventDefault();
-        this.setState({loading: true});
         const {email, password, confirmPassword, handle} = this.state;
 
-        const postData = {email, password, confirmPassword, handle};
-        console.log(postData);
-
-        Axios.post("/signup", postData)
-            .then(res => {
-                console.log(res.data);
-                const {token} = res.data;
-                localStorage.setItem("fbIdToken", `Bearer ${token}`);
-                this.setState({loading: false});
-                this.props.history.push("/");
-            })
-            .catch(err => {
-                console.log(this.state.err);
-                this.setState({
-                    err: err.response.data,
-                    loading: false
-                });
-            });
+        const newUserData: NewUserData = {email, password, confirmPassword, handle};
+        this.props.signupUser(newUserData, this.props.history);
     };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         // @ts-ignore
         this.setState({[event.target.name]: event.target.value});
-        //console.log(this.state);
     };
 
     render() {
-        const {classes} = this.props;
-        const {email, password, confirmPassword, handle, err, loading} = this.state;
+        const {classes, UI: {loading}} = this.props;
+        const {email, password, confirmPassword, handle, err} = this.state;
         return (
             <Grid container className={classes.form}>
                 <Grid item sm />
@@ -126,4 +118,10 @@ class Signup extends Component<Props & RouteComponentProps & WithStyles<typeof s
     }
 }
 
-export default withStyles(styles)(withRouter(Signup));
+const mapStateToProps = (state: ApplicationState) => ({
+    user: state.user,
+    UI: state.UI
+});
+
+// @ts-ignore
+export default connect(mapStateToProps, {signupUser})(withStyles(styles)(withRouter(Signup)));

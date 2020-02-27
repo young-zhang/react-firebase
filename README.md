@@ -175,7 +175,7 @@ interface State {
     // states
 }
 
-class CustomComponent extends Component<Props & RouteComponentProps<Props> & WithStyles<typeof styles>, State> {
+class CustomComponent extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
     // ...
 }
 
