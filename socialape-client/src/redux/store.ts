@@ -1,4 +1,4 @@
-import {createStore, combineReducers, applyMiddleware, Store, AnyAction} from "redux";
+import {createStore, combineReducers, applyMiddleware, AnyAction} from "redux";
 import {composeWithDevTools} from 'redux-devtools-extension';
 import thunk, {ThunkDispatch} from "redux-thunk";
 import userReducer, {UserState, initialState as initialUserState} from "./reducers/userReducer";

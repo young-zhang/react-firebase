@@ -22,7 +22,7 @@ if (token) {
     console.log(decodedToken);
     if (decodedToken.exp * 1000 < Date.now()) {
         store.dispatch(setUnauthenticated());
-        window.location.href = "/login";
+        //window.location.href = "/login";
     }
     else {
         store.dispatch(setAuthenticated());

@@ -134,6 +134,9 @@ and [Typescript - how to omit properties so a subset can be transferred with spr
 npm install --save redux react-redux redux-thunk @types/react-redux
 ```
 
+[#20](https://youtu.be/7BG_3JTmkKU?list=PLMhAeHCz8S38ryyeMiBPPUnFAiWnoPvWP) Profile section:
+[Material Icons](https://material-ui.com/components/material-icons/) `npm install --save @material-ui/icons`
+
 ---
 
 ## Misc Resources

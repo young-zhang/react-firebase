@@ -1,6 +1,6 @@
 import Axios, {CancelToken} from "axios";
 import {clearError, loadingUi, setError, UiStateAction} from "../reducers/uiReducer";
-import {setUnauthenticated, setUser, UserState, UserStateAction} from "../reducers/userReducer";
+import {loadingUser, setUnauthenticated, setUser, UserStateAction} from "../reducers/userReducer";
 import {ActionCreator} from 'redux'
 import {ThunkAction} from 'redux-thunk'
 
@@ -52,9 +52,9 @@ export const logoutUser: ActionCreator<ThunkAction<Promise<void>, any, undefined
     };
 };
 
-
 export const getUserData: ActionCreator<ThunkAction<Promise<void>, any, undefined, UserStateAction>> = () => {
     return async (dispatch) => {
+        dispatch(loadingUser());
         Axios.get("/user")
             .then(res => dispatch(setUser(res.data)))
             .catch(err => console.log(err));

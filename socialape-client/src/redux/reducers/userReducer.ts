@@ -3,6 +3,7 @@ import {Action, ActionCreator} from "redux";
 
 export interface UserState {
     readonly authenticated: boolean,
+    readonly loading: boolean
     readonly credentials: Credentials,
     readonly likes: Like[],
     readonly notifications: Notification[]
@@ -10,6 +11,7 @@ export interface UserState {
 
 export const initialState: UserState = {
     authenticated: false,
+    loading: false,
     credentials: {},
     likes: [],
     notifications: []
@@ -27,11 +29,14 @@ export interface SetUnauthenticatedAction extends Action<"SET_UNAUTHENTICATED"> 
 
 export interface SetUserAction extends Action<"SET_USER"> {payload: UserPayload}
 
-export type UserStateAction = SetAuthenticatedAction | SetUnauthenticatedAction | SetUserAction
+export interface LoadingUserAction extends Action<"LOADING_USER"> {}
+
+export type UserStateAction = SetAuthenticatedAction | SetUnauthenticatedAction | SetUserAction | LoadingUserAction
 
 export const setAuthenticated: ActionCreator<SetAuthenticatedAction> = () => ({type: "SET_AUTHENTICATED"});
 export const setUnauthenticated: ActionCreator<SetUnauthenticatedAction> = () => ({type: "SET_UNAUTHENTICATED"});
 export const setUser: ActionCreator<SetUserAction> = (payload: UserPayload) => ({type: "SET_USER", payload});
+export const loadingUser: ActionCreator<LoadingUserAction> = () => ({type: "LOADING_USER"});
 
 export default function (state = initialState, action: UserStateAction) {
     switch (action.type) {
@@ -45,7 +50,13 @@ export default function (state = initialState, action: UserStateAction) {
     case "SET_USER":
         return {
             authenticated: true,
+            loading: false,
             ...action.payload
+        };
+    case "LOADING_USER":
+        return {
+            ...state,
+            loading: true
         };
     default:
         return state;
