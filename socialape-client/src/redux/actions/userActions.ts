@@ -61,6 +61,15 @@ export const getUserData: ActionCreator<ThunkAction<Promise<void>, any, undefine
     };
 };
 
+export const uploadImage: ActionCreator<ThunkAction<Promise<void>, any, undefined, UserStateAction>> = (formData: FormData) => {
+    return async (dispatch) => {
+        dispatch(loadingUser());
+        Axios.post("/user/image", formData)
+            .then(() => dispatch(getUserData()))
+            .catch(err => console.log(err));
+    };
+};
+
 const setAuthorizationHeader = (token: CancelToken) => {
     const fbIdToken = `Bearer ${token}`;
     localStorage.setItem("fbIdToken", fbIdToken);

@@ -3,15 +3,16 @@ import {Component, Fragment} from "react";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {connect} from "react-redux";
 import {Link, RouteComponentProps, withRouter} from "react-router-dom";
-import {Button, createStyles, Link as MuiLink, Typography} from "@material-ui/core";
+import {Button, createStyles, IconButton, Link as MuiLink, Tooltip, Typography} from "@material-ui/core";
 import {ApplicationState} from "../redux/store";
 import {UserState} from "../redux/reducers/userReducer";
 import {ReactNode} from "react";
 import {Paper} from "@material-ui/core";
-import {CalendarToday, Link as LinkIcon, LocationOn} from "@material-ui/icons";
+import {CalendarToday, Edit as EditIcon, Link as LinkIcon, LocationOn} from "@material-ui/icons";
 import dayjs from "dayjs";
 import {getUrl} from "../types";
 import theme from "../utils/theme";
+import {logoutUser, uploadImage} from "../redux/actions/userActions";
 
 const styles = createStyles({
     paper: {
@@ -63,9 +64,25 @@ const styles = createStyles({
 
 interface Props {
     user: UserState
+    logoutUser: any,
+    uploadImage: any,
 }
 
 class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, {}> {
+    handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event?.target?.files && event.target.files.length > 0) {
+            const image: File = event.target.files[0];
+            const formData = new FormData();
+            formData.append("image", image, image.name);
+            this.props.uploadImage(formData);
+        }
+    };
+
+    handleEditPicture = () => {
+        const fileInput = document.getElementById("imageInput");
+        fileInput?.click();
+    };
+
     render() {
         const {
             classes,
@@ -86,6 +103,12 @@ class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof 
                     <div className={classes.profile}>
                         <div className="image-wrapper">
                             <img src={getUrl(imageUrl)} alt="profile" className="profile-image" />
+                            <input type="file" id="imageInput" hidden onChange={this.handleImageChange} />
+                            <Tooltip title="Edit profile picture" placement="top">
+                                <IconButton onClick={this.handleEditPicture} className="button">
+                                    <EditIcon color="primary" />
+                                </IconButton>
+                            </Tooltip>
                         </div>
                         <hr />
                         <div className="profile-details">
@@ -143,5 +166,7 @@ const mapStateToProps = (state: ApplicationState) => ({
     user: state.user
 });
 
+const mapActionsToProps = {logoutUser, uploadImage};
+
 // @ts-ignore
-export default connect(mapStateToProps)(withStyles(styles)(withRouter(Profile)));
+export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(withRouter(Profile)));
