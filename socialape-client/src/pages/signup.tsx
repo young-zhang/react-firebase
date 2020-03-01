@@ -34,7 +34,7 @@ interface Props {
 }
 
 class Signup extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
-    state = {
+    readonly state: State = {
         email: "",
         password: "",
         confirmPassword: "",

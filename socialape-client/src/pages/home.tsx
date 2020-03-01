@@ -7,7 +7,7 @@ import {Scream as IScream} from "../types";
 import Profile from "../components/Profile";
 
 export default class Home extends Component<{}, { screams: IScream[] }> {
-    state = {
+    readonly state = {
         screams: []
     };
 

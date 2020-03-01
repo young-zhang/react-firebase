@@ -31,7 +31,7 @@ interface Props {
 }
 
 class Login extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
-    state = {
+    readonly state: State = {
         email: "",
         password: "",
         err: {email: null, password: null, error: null, general: null},

@@ -3,6 +3,7 @@ import {clearError, loadingUi, setError, UiStateAction} from "../reducers/uiRedu
 import {loadingUser, setUnauthenticated, setUser, UserStateAction} from "../reducers/userReducer";
 import {ActionCreator} from 'redux'
 import {ThunkAction} from 'redux-thunk'
+import {Credentials} from "../../types";
 
 export interface UserLoginData {
     email: string,
@@ -69,6 +70,16 @@ export const uploadImage: ActionCreator<ThunkAction<Promise<void>, any, undefine
             .catch(err => console.log(err));
     };
 };
+
+export const editUserDetails: ActionCreator<ThunkAction<Promise<void>, any, undefined, UserStateAction>> = (userDetails: Credentials) => {
+    return async (dispatch) => {
+        dispatch(loadingUser());
+        Axios.post("/user", userDetails)
+            .then(() => dispatch(getUserData()))
+            .catch(err => console.log(err));
+    };
+};
+
 
 const setAuthorizationHeader = (token: CancelToken) => {
     const fbIdToken = `Bearer ${token}`;

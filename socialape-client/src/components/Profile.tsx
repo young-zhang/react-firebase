@@ -8,11 +8,12 @@ import {ApplicationState} from "../redux/store";
 import {UserState} from "../redux/reducers/userReducer";
 import {ReactNode} from "react";
 import {Paper} from "@material-ui/core";
-import {CalendarToday, Edit as EditIcon, Link as LinkIcon, LocationOn} from "@material-ui/icons";
+import {CalendarToday, Edit as EditIcon, KeyboardReturn, Link as LinkIcon, LocationOn} from "@material-ui/icons";
 import dayjs from "dayjs";
 import {getUrl} from "../types";
 import theme from "../utils/theme";
 import {logoutUser, uploadImage} from "../redux/actions/userActions";
+import EditDetails from "./EditDetails";
 
 const styles = createStyles({
     paper: {
@@ -64,8 +65,8 @@ const styles = createStyles({
 
 interface Props {
     user: UserState
-    logoutUser: any,
-    uploadImage: any,
+    logoutUser: typeof logoutUser,
+    uploadImage: typeof uploadImage,
 }
 
 class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof styles>, {}> {
@@ -81,6 +82,10 @@ class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof 
     handleEditPicture = () => {
         const fileInput = document.getElementById("imageInput");
         fileInput?.click();
+    };
+
+    handleLogout = () => {
+        this.props.logoutUser();
     };
 
     render() {
@@ -137,6 +142,12 @@ class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof 
                             <CalendarToday color="primary" />{" "}
                             <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
                         </div>
+                        <Tooltip title="Logout" placement="top">
+                            <IconButton onClick={this.handleLogout}>
+                                <KeyboardReturn color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <EditDetails />
                     </div>
                 </Paper>
             );
