@@ -7,10 +7,9 @@ import {RouteComponentProps, withRouter, Link} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import styles from "../utils/styles";
 import {ApplicationState} from "../redux/store";
-import {NewUserData, signupUser} from "../redux/actions/userActions";
+import {NewUserData, signupUser, UserState} from "../redux/actions/userActions";
 import {connect} from "react-redux";
-import {UserState} from "../redux/reducers/userReducer";
-import {UiState} from "../redux/reducers/uiReducer";
+import {UiState} from "../redux/actions/uiActions";
 
 interface State {
     email: string

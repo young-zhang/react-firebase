@@ -9,9 +9,8 @@ import styles from "../utils/styles";
 import {connect} from "react-redux";
 import {ApplicationState} from "../redux/store";
 import {Dispatch} from "redux";
-import {loginUser, UserLoginData} from "../redux/actions/userActions";
-import {UserState} from "../redux/reducers/userReducer";
-import {UiState} from "../redux/reducers/uiReducer";
+import {loginUser, UserLoginData, UserState} from "../redux/actions/userActions";
+import {UiState} from "../redux/actions/uiActions";
 
 interface State {
     email: string

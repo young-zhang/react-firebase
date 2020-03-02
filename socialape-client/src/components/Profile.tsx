@@ -5,14 +5,13 @@ import {connect} from "react-redux";
 import {Link, RouteComponentProps, withRouter} from "react-router-dom";
 import {Button, createStyles, Link as MuiLink, Typography} from "@material-ui/core";
 import {ApplicationState} from "../redux/store";
-import {UserState} from "../redux/reducers/userReducer";
+import {logoutUser, uploadImage, UserState} from "../redux/actions/userActions";
 import {ReactNode} from "react";
 import {Paper} from "@material-ui/core";
 import {CalendarToday, Edit as EditIcon, KeyboardReturn, Link as LinkIcon, LocationOn} from "@material-ui/icons";
 import dayjs from "dayjs";
 import {getUrl} from "../types";
 import theme from "../utils/theme";
-import {logoutUser, uploadImage} from "../redux/actions/userActions";
 import EditDetails from "./EditDetails";
 import MyButton from "../utils/MyButton";
 

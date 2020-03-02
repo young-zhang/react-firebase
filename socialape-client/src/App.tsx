@@ -11,8 +11,7 @@ import Signup from "./pages/signup";
 import Navbar from "./components/Navbar";
 import AuthRoute from "./utils/AuthRoute";
 import store from "./redux/store"
-import {setAuthenticated, setUnauthenticated} from "./redux/reducers/userReducer";
-import {getUserData} from "./redux/actions/userActions";
+import {getUserData, setAuthenticated, setUnauthenticated} from "./redux/actions/userActions";
 import Axios from "axios";
 
 const token = localStorage.getItem("fbIdToken");

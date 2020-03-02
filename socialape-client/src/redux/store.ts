@@ -1,8 +1,10 @@
 import {createStore, combineReducers, applyMiddleware, AnyAction} from "redux";
 import {composeWithDevTools} from 'redux-devtools-extension';
 import thunk, {ThunkDispatch} from "redux-thunk";
-import userReducer, {UserState, initialState as initialUserState} from "./reducers/userReducer";
-import uiReducer, {UiState, initialState as initialUiState} from "./reducers/uiReducer";
+import {UserState, initialState as initialUserState} from "./actions/userActions";
+import {UiState, initialState as initialUiState} from "./actions/uiActions"
+import uiReducer from "./reducers/uiReducer";
+import userReducer from "./reducers/userReducer";
 
 export interface ApplicationState {
     user: UserState
