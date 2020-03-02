@@ -3,7 +3,7 @@ import {Component, Fragment} from "react";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {connect} from "react-redux";
 import {Link, RouteComponentProps, withRouter} from "react-router-dom";
-import {Button, createStyles, IconButton, Link as MuiLink, Tooltip, Typography} from "@material-ui/core";
+import {Button, createStyles, Link as MuiLink, Typography} from "@material-ui/core";
 import {ApplicationState} from "../redux/store";
 import {UserState} from "../redux/reducers/userReducer";
 import {ReactNode} from "react";
@@ -14,6 +14,7 @@ import {getUrl} from "../types";
 import theme from "../utils/theme";
 import {logoutUser, uploadImage} from "../redux/actions/userActions";
 import EditDetails from "./EditDetails";
+import MyButton from "../utils/MyButton";
 
 const styles = createStyles({
     paper: {
@@ -109,11 +110,9 @@ class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof 
                         <div className="image-wrapper">
                             <img src={getUrl(imageUrl)} alt="profile" className="profile-image" />
                             <input type="file" id="imageInput" hidden onChange={this.handleImageChange} />
-                            <Tooltip title="Edit profile picture" placement="top">
-                                <IconButton onClick={this.handleEditPicture} className="button">
-                                    <EditIcon color="primary" />
-                                </IconButton>
-                            </Tooltip>
+                            <MyButton tip="Edit profile picture" onClick={this.handleEditPicture} btnClassName="button">
+                                <EditIcon color="primary" />
+                            </MyButton>
                         </div>
                         <hr />
                         <div className="profile-details">
@@ -142,11 +141,9 @@ class Profile extends Component<Props & RouteComponentProps & WithStyles<typeof 
                             <CalendarToday color="primary" />{" "}
                             <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
                         </div>
-                        <Tooltip title="Logout" placement="top">
-                            <IconButton onClick={this.handleLogout}>
-                                <KeyboardReturn color="primary" />
-                            </IconButton>
-                        </Tooltip>
+                        <MyButton tip="Logout" onClick={this.handleLogout}>
+                            <KeyboardReturn color="primary" />
+                        </MyButton>
                         <EditDetails />
                     </div>
                 </Paper>

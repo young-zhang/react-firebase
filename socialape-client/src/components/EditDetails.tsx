@@ -2,11 +2,12 @@ import {RouteComponentProps, withRouter} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import React, {Component, Fragment} from "react";
 import {connect} from "react-redux";
-import {Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip} from "@material-ui/core";
+import {Button, createStyles, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@material-ui/core";
 import {Edit as EditIcon} from "@material-ui/icons";
 import {ApplicationState} from "../redux/store";
 import {editUserDetails} from "../redux/actions/userActions";
 import {Credentials} from "../types";
+import MyButton from "../utils/MyButton";
 
 const styles = createStyles({
     // styles here
@@ -40,7 +41,7 @@ class EditDetails extends Component<Props & RouteComponentProps & WithStyles<typ
 
     handleOpen = () => {
         this.mapUserDetailsToState(this.props.credentials);
-        this.setState({ open: true });
+        this.setState({open: true});
     };
 
     handleClose = () => {
@@ -78,11 +79,9 @@ class EditDetails extends Component<Props & RouteComponentProps & WithStyles<typ
         const {classes} = this.props;
         return (
             <Fragment>
-                <Tooltip title="Edit details" placement="top">
-                    <IconButton onClick={this.handleOpen} className={classes.button}>
-                        <EditIcon color="primary" />
-                    </IconButton>
-                </Tooltip>
+                <MyButton tip="Edit details" onClick={this.handleOpen} btnClassName={classes.button}>
+                    <EditIcon color="primary" />
+                </MyButton>
                 <Dialog open={this.state.open} onClose={this.handleClose} fullWidth maxWidth="sm">
                     <DialogTitle>Edit your details</DialogTitle>
                     <DialogContent>
