@@ -3,6 +3,7 @@ import {Action, ActionCreator} from 'redux'
 import {ThunkAction} from 'redux-thunk'
 import {Credentials, Like} from "../../types";
 import {clearError, loadingUi, setError, UiStateAction} from "./uiActions";
+import {LikeScreamAction, UnlikeScreamAction} from "./dataActions";
 
 export interface UserState {
     readonly authenticated: boolean,
@@ -35,6 +36,7 @@ export interface SetUserAction extends Action<"SET_USER"> {payload: UserPayload}
 export interface LoadingUserAction extends Action<"LOADING_USER"> {}
 
 export type UserStateAction = SetAuthenticatedAction | SetUnauthenticatedAction | SetUserAction | LoadingUserAction
+    | LikeScreamAction | UnlikeScreamAction;
 
 export const setAuthenticated: ActionCreator<SetAuthenticatedAction> = () => ({type: "SET_AUTHENTICATED"});
 export const setUnauthenticated: ActionCreator<SetUnauthenticatedAction> = () => ({type: "SET_UNAUTHENTICATED"});

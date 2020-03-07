@@ -20,6 +20,24 @@ export default function (state = initialState, action: UserStateAction) {
             ...state,
             loading: true
         };
+    case "LIKE_SCREAM":
+        console.log("userReducer: LIKE_SCREAM");
+        return {
+            ...state,
+            likes: [
+                ...state.likes,
+                {
+                    userHandle: state.credentials.handle,
+                    screamId: action.payload.screamId
+                }
+            ]
+        };
+    case "UNLIKE_SCREAM":
+        console.log("userReducer: UNLIKE_SCREAM");
+        return {
+            ...state,
+            likes: state.likes.filter(like => like.screamId !== action.payload.screamId)
+        };
     default:
         return state;
     }

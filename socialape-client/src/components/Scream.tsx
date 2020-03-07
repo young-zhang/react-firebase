@@ -1,11 +1,18 @@
 import * as React from "react";
 import {Component} from "react";
+import {Link, withRouter} from "react-router-dom";
 import {getUrl, Scream as IScream} from "../types";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {Card, CardContent, CardMedia, createStyles, Typography} from "@material-ui/core";
-import {Link} from "react-router-dom";
+import ChatIcon from "@material-ui/icons/Chat";
 import relativeTime from "dayjs/plugin/relativeTime"
 import dayjs from "dayjs";
+import {ApplicationState} from "../redux/store";
+import {likeScreamId, unlikeScreamId} from "../redux/actions/dataActions";
+import {UserState} from "../redux/actions/userActions";
+import {connect} from "react-redux";
+import MyButton from "../utils/MyButton";
+import {FavoriteBorder, Favorite as FavoriteIcon} from "@material-ui/icons";
 
 const styles = createStyles({
     card: {
@@ -21,14 +28,41 @@ const styles = createStyles({
     }
 });
 
-interface Props extends WithStyles<typeof styles>{
+interface Props {
+    likeScream: typeof likeScreamId
+    unlikeScream: typeof unlikeScreamId
+    user: UserState
     scream: IScream
 }
 
-class Scream extends Component<Props> {
+class Scream extends Component<Props & WithStyles<typeof styles>> {
+    likedScream = () => {
+        return (this.props.user.likes && this.props.user.likes.find(like => like.screamId === this.props.scream.screamId));
+    };
+
+    likeScream = () => this.props.likeScream(this.props.scream.screamId);
+    unlikeScream = () => this.props.unlikeScream(this.props.scream.screamId);
+
     render() {
         dayjs.extend(relativeTime);
-        const {classes, scream} = this.props;
+        const {classes, scream, user: {authenticated}} = this.props;
+        const likeButton = !authenticated ? (
+            <MyButton tip="Like">
+                <Link to="/login">
+                    <FavoriteBorder color="primary" />
+                </Link>
+            </MyButton>
+        ) : (
+            this.likedScream() ? (
+                <MyButton tip="Undo like" onClick={this.unlikeScream}>
+                    <FavoriteIcon color="primary" />
+                </MyButton>
+            ) : (
+                <MyButton tip="Like" onClick={this.likeScream}>
+                    <FavoriteBorder color="primary" />
+                </MyButton>
+            )
+        );
         return (
             <Card className={classes.card}>
                 <CardMedia className={classes.image} image={getUrl(scream.imageUrl)} title="Profile image" />
@@ -40,10 +74,26 @@ class Scream extends Component<Props> {
                         {dayjs(scream.createdAt).fromNow()}
                     </Typography>
                     <Typography variant="body1">{scream.body}</Typography>
+                    {likeButton}
+                    <span>{scream.likeCount} Likes</span>
+                    <MyButton tip="comments">
+                        <ChatIcon color="primary" />
+                    </MyButton>
+                    <span>{scream.commentCount} Comments</span>
                 </CardContent>
             </Card>
         );
     }
 }
 
-export default withStyles(styles)(Scream);
+const mapStateToProps = (state: ApplicationState) => ({
+    user: state.user
+});
+
+const mapActionsToProps = {
+    likeScream: likeScreamId,
+    unlikeScream: unlikeScreamId
+};
+
+// @ts-ignore
+export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(withRouter(Scream)));

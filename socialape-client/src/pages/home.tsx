@@ -1,24 +1,32 @@
 import * as React from "react";
 import {Component} from "react";
 import {Grid} from "@material-ui/core";
-import Axios from "axios";
 import Scream from "../components/Scream";
 import {Scream as IScream} from "../types";
 import Profile from "../components/Profile";
+import {ApplicationState} from "../redux/store";
+import {connect} from "react-redux";
+import {withRouter} from "react-router-dom";
+import {DataState, getScreams} from "../redux/actions/dataActions";
 
-export default class Home extends Component<{}, { screams: IScream[] }> {
+interface Props {
+    data: DataState
+    getScreams: typeof getScreams
+}
+
+class Home extends Component<Props> {
     readonly state = {
         screams: []
     };
 
     componentDidMount(): void {
-        Axios.get("/screams")
-            .then(res => { this.setState({screams: res.data}); });
+        this.props.getScreams();
     }
 
     render() {
-        let recentScreamsMarkup = this.state.screams ?
-            this.state.screams.map((scream: IScream) => (<Scream key={scream.screamId} scream={scream} />))
+        const { screams, loading } = this.props.data;
+        let recentScreamsMarkup = !loading ?
+            screams.map((scream: IScream) => (<Scream key={scream.screamId} scream={scream} />))
             : (<p>Loading...</p>);
         return (
             // "The [Grid] spacing property is an integer between 0 and 10 inclusive" and cannot be 16!
@@ -34,3 +42,10 @@ export default class Home extends Component<{}, { screams: IScream[] }> {
         );
     }
 }
+
+const mapStateToProps = (state: ApplicationState) => ({
+    data: state.data
+});
+
+// @ts-ignore
+export default connect(mapStateToProps, {getScreams})(withRouter(Home));
