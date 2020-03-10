@@ -11,7 +11,7 @@ import Signup from "./pages/signup";
 import Navbar from "./components/Navbar";
 import AuthRoute from "./utils/AuthRoute";
 import store from "./redux/store"
-import {getUserData, setAuthenticated, setUnauthenticated} from "./redux/actions/userActions";
+import {getUserData, setAuthenticatedAction, setUnauthenticatedAction} from "./redux/actions/userActions";
 import Axios from "axios";
 
 const token = localStorage.getItem("fbIdToken");
@@ -20,11 +20,11 @@ if (token) {
     const decodedToken: any = JwtDecode(token);
     console.log(decodedToken);
     if (decodedToken.exp * 1000 < Date.now()) {
-        store.dispatch(setUnauthenticated());
+        store.dispatch(setUnauthenticatedAction());
         //window.location.href = "/login";
     }
     else {
-        store.dispatch(setAuthenticated());
+        store.dispatch(setAuthenticatedAction());
         Axios.defaults.headers.common["Authorization"] = token;
         store.dispatch(getUserData());
     }

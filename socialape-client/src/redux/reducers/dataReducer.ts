@@ -1,7 +1,8 @@
 import {DataAction, DataState, initialState} from "../actions/dataActions";
 
 export default function (state = initialState, action: DataAction): DataState {
-    switch(action.type) {
+    let index: number;
+    switch (action.type) {
     case "LOADING_DATA":
         return {
             ...state,
@@ -15,15 +16,19 @@ export default function (state = initialState, action: DataAction): DataState {
         };
     case "LIKE_SCREAM":
     case "UNLIKE_SCREAM":
-        console.log(`dataReducer: ${action.type}, payload=`);
-        console.log(action.payload);
-        let index = state.screams.findIndex((scream) => scream.screamId===action.payload.screamId);
+        // console.log(`dataReducer: ${action.type}, payload=`);
+        // console.log(action.payload);
+        index = state.screams.findIndex((scream) => scream.screamId === action.payload.screamId);
         state.screams[index] = action.payload;
-        console.log(`state.screams[${index}]=`);
-        console.log(state.screams[index]);
+        // console.log(`state.screams[${index}]=`);
+        // console.log(state.screams[index]);
         return {
             ...state
         };
+    case "DELETE_SCREAM":
+        index = state.screams.findIndex(scream => scream.screamId === action.payload);
+        state.screams.splice(index, 1);
+        return {...state};
     default:
         return state;
     }

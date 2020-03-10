@@ -8,14 +8,16 @@ import ChatIcon from "@material-ui/icons/Chat";
 import relativeTime from "dayjs/plugin/relativeTime"
 import dayjs from "dayjs";
 import {ApplicationState} from "../redux/store";
-import {likeScreamId, unlikeScreamId} from "../redux/actions/dataActions";
+import {likeScream, unlikeScream} from "../redux/actions/dataActions";
 import {UserState} from "../redux/actions/userActions";
 import {connect} from "react-redux";
 import MyButton from "../utils/MyButton";
 import {FavoriteBorder, Favorite as FavoriteIcon} from "@material-ui/icons";
+import DeleteScream from "./DeleteScream";
 
 const styles = createStyles({
     card: {
+        position: "relative",
         display: "flex",
         marginBottom: 20
     },
@@ -29,8 +31,8 @@ const styles = createStyles({
 });
 
 interface Props {
-    likeScream: typeof likeScreamId
-    unlikeScream: typeof unlikeScreamId
+    likeScream: typeof likeScream
+    unlikeScream: typeof unlikeScream
     user: UserState
     scream: IScream
 }
@@ -45,7 +47,7 @@ class Scream extends Component<Props & WithStyles<typeof styles>> {
 
     render() {
         dayjs.extend(relativeTime);
-        const {classes, scream, user: {authenticated}} = this.props;
+        const {classes, scream, user: {authenticated, credentials: {handle}}} = this.props;
         const likeButton = !authenticated ? (
             <MyButton tip="Like">
                 <Link to="/login">
@@ -63,6 +65,10 @@ class Scream extends Component<Props & WithStyles<typeof styles>> {
                 </MyButton>
             )
         );
+        const deleteButton = authenticated && scream.userHandle === handle ? (
+            <DeleteScream screamId={scream.screamId} />
+        ) : null;
+
         return (
             <Card className={classes.card}>
                 <CardMedia className={classes.image} image={getUrl(scream.imageUrl)} title="Profile image" />
@@ -70,6 +76,8 @@ class Scream extends Component<Props & WithStyles<typeof styles>> {
                     <Typography variant="h5" component={Link} to={`/users/${scream.userHandle}`} color="primary">
                         {scream.userHandle}
                     </Typography>
+                    <br />
+                    {deleteButton}
                     <Typography variant="body2" color="textSecondary">
                         {dayjs(scream.createdAt).fromNow()}
                     </Typography>
@@ -91,8 +99,8 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const mapActionsToProps = {
-    likeScream: likeScreamId,
-    unlikeScream: unlikeScreamId
+    likeScream,
+    unlikeScream
 };
 
 // @ts-ignore

@@ -16,50 +16,61 @@ export const initialState: DataState = {
 };
 
 export interface LoadingDataAction extends Action<"LOADING_DATA"> {}
+export const loadingDataAction: ActionCreator<LoadingDataAction> = () => ({type: "LOADING_DATA"});
 
 export interface SetScreamsAction extends Action<"SET_SCREAMS"> {payload: Scream[]}
+export const setScreamsAction: ActionCreator<SetScreamsAction> = (payload: Scream[]) => ({type: "SET_SCREAMS", payload});
 
 export interface LikeScreamAction extends Action<"LIKE_SCREAM"> {payload: Scream}
+export const likeScreamAction: ActionCreator<LikeScreamAction> = (scream: Scream) => ({type: "LIKE_SCREAM", payload: scream});
 
 export interface UnlikeScreamAction extends Action<"UNLIKE_SCREAM"> {payload: Scream}
+export const unlikeScreamAction: ActionCreator<UnlikeScreamAction> = (scream: Scream) => ({type: "UNLIKE_SCREAM", payload: scream});
 
-export type DataAction = LoadingDataAction | SetScreamsAction | LikeScreamAction | UnlikeScreamAction
+export interface DeleteScreamAction extends Action<"DELETE_SCREAM"> {payload: string}
+export const deleteScreamAction: ActionCreator<DeleteScreamAction> = (screamId: string) => ({type: "DELETE_SCREAM", payload: screamId});
 
-export const loadingData: ActionCreator<LoadingDataAction> = () => ({type: "LOADING_DATA"});
-export const setScreams: ActionCreator<SetScreamsAction> = (payload: Scream[]) => ({type: "SET_SCREAMS", payload});
-export const likeScream: ActionCreator<LikeScreamAction> = (scream: Scream) => ({type: "LIKE_SCREAM", payload: scream});
-export const unlikeScream: ActionCreator<UnlikeScreamAction> = (scream: Scream) => ({type: "UNLIKE_SCREAM", payload: scream});
+export type DataAction = LoadingDataAction | SetScreamsAction | LikeScreamAction | UnlikeScreamAction | DeleteScreamAction;
 
 // Get all screams
 export const getScreams: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = () => {
     return async (dispatch) => {
-        console.log("getScreams");
-        dispatch(loadingData());
+        // console.log("getScreams");
+        dispatch(loadingDataAction());
         Axios.get("/screams")
-            .then(res => dispatch(setScreams(res.data)))
+            .then(res => dispatch(setScreamsAction(res.data)))
             .catch(err => {
-                dispatch(setScreams([]));
+                dispatch(setScreamsAction([]));
                 console.log(err);
             });
     };
 };
 
 // Like a scream
-export const likeScreamId: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = (screamId: string) => {
+export const likeScream: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = (screamId: string) => {
     return async (dispatch) => {
-        console.log(`Liked: ${screamId}`);
+        // console.log(`Liked: ${screamId}`);
         Axios.get(`/scream/${screamId}/like`)
-            .then(res => dispatch(likeScream({screamId, ...res.data})))
+            .then(res => dispatch(likeScreamAction({screamId, ...res.data})))
             .catch(err => console.log(err));
     };
 };
 
 // Unlike a scream
-export const unlikeScreamId: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = (screamId: string) => {
+export const unlikeScream: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = (screamId: string) => {
     return async (dispatch) => {
-        console.log(`Unliked: ${screamId}`);
+        // console.log(`Unliked: ${screamId}`);
         Axios.get(`/scream/${screamId}/unlike`)
-            .then(res => dispatch(unlikeScream({screamId, ...res.data})))
+            .then(res => dispatch(unlikeScreamAction({screamId, ...res.data})))
+            .catch(err => console.log(err));
+    };
+};
+
+export const deleteScream: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = (screamId: string) => {
+    return async (dispatch) => {
+        console.log(`Deleting: ${screamId}`);
+        Axios.delete(`/scream/${screamId}`)
+            .then(res => dispatch(deleteScreamAction(screamId)))
             .catch(err => console.log(err));
     };
 };
