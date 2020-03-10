@@ -2,6 +2,7 @@ import Axios from "axios";
 import {Action, ActionCreator} from 'redux'
 import {ThunkAction} from 'redux-thunk'
 import {Scream} from "../../types";
+import {clearErrorAction, loadingUiAction, setErrorAction, UiStateAction} from "./uiActions";
 
 export interface DataState {
     readonly screams: Scream[]
@@ -21,6 +22,9 @@ export const loadingDataAction: ActionCreator<LoadingDataAction> = () => ({type:
 export interface SetScreamsAction extends Action<"SET_SCREAMS"> {payload: Scream[]}
 export const setScreamsAction: ActionCreator<SetScreamsAction> = (payload: Scream[]) => ({type: "SET_SCREAMS", payload});
 
+export interface PostScreamAction extends Action<"POST_SCREAM"> {payload: Scream}
+export const postScreamAction: ActionCreator<PostScreamAction> = (payload: Scream) => ({type: "POST_SCREAM", payload});
+
 export interface LikeScreamAction extends Action<"LIKE_SCREAM"> {payload: Scream}
 export const likeScreamAction: ActionCreator<LikeScreamAction> = (scream: Scream) => ({type: "LIKE_SCREAM", payload: scream});
 
@@ -30,7 +34,7 @@ export const unlikeScreamAction: ActionCreator<UnlikeScreamAction> = (scream: Sc
 export interface DeleteScreamAction extends Action<"DELETE_SCREAM"> {payload: string}
 export const deleteScreamAction: ActionCreator<DeleteScreamAction> = (screamId: string) => ({type: "DELETE_SCREAM", payload: screamId});
 
-export type DataAction = LoadingDataAction | SetScreamsAction | LikeScreamAction | UnlikeScreamAction | DeleteScreamAction;
+export type DataAction = LoadingDataAction | SetScreamsAction | PostScreamAction | LikeScreamAction | UnlikeScreamAction | DeleteScreamAction;
 
 // Get all screams
 export const getScreams: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction>> = () => {
@@ -43,6 +47,19 @@ export const getScreams: ActionCreator<ThunkAction<Promise<void>, any, undefined
                 dispatch(setScreamsAction([]));
                 console.log(err);
             });
+    };
+};
+
+// Post a scream
+export const postScream: ActionCreator<ThunkAction<Promise<void>, any, undefined, DataAction | UiStateAction>> = (newScream: Scream) => {
+    return async (dispatch) => {
+        dispatch(loadingUiAction());
+        Axios.post("/scream", newScream)
+            .then(res => {
+                dispatch(postScreamAction(res.data));
+                dispatch(clearErrorAction());
+            })
+            .catch(err => dispatch(setErrorAction(err.response.data)));
     };
 };
 

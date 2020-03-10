@@ -5,10 +5,10 @@ import {Link, RouteComponentProps, withRouter} from "react-router-dom";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {connect} from "react-redux";
 import {ApplicationState} from "../redux/store";
-import AddIcon from "@material-ui/icons/Add"
 import HomeIcon from "@material-ui/icons/Home"
 import Notifications from "@material-ui/icons/Notifications"
 import MyButton from "../utils/MyButton";
+import PostScream from "./PostScream";
 
 const styles = createStyles({
     // styles here
@@ -26,7 +26,7 @@ class Navbar extends Component<Props & RouteComponentProps & WithStyles<typeof s
                 <Toolbar className="nav-container">
                     {authenticated ? (
                         <Fragment>
-                            <MyButton tip="Create a scream!"><AddIcon /></MyButton>
+                            <PostScream />
                             <Link to="/">
                                 <MyButton tip="Home"><HomeIcon /></MyButton>
                             </Link>
