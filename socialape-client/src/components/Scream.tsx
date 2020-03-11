@@ -14,6 +14,7 @@ import {connect} from "react-redux";
 import MyButton from "../utils/MyButton";
 import {FavoriteBorder, Favorite as FavoriteIcon} from "@material-ui/icons";
 import DeleteScream from "./DeleteScream";
+import ScreamDialog from "./ScreamDialog";
 
 const styles = createStyles({
     card: {
@@ -55,16 +56,16 @@ class Scream extends Component<Props & WithStyles<typeof styles>> {
                 </Link>
             </MyButton>
         ) : (
-            this.likedScream() ? (
-                <MyButton tip="Undo like" onClick={this.unlikeScream}>
-                    <FavoriteIcon color="primary" />
-                </MyButton>
-            ) : (
-                <MyButton tip="Like" onClick={this.likeScream}>
-                    <FavoriteBorder color="primary" />
-                </MyButton>
-            )
-        );
+                this.likedScream() ? (
+                    <MyButton tip="Undo like" onClick={this.unlikeScream}>
+                        <FavoriteIcon color="primary" />
+                    </MyButton>
+                ) : (
+                        <MyButton tip="Like" onClick={this.likeScream}>
+                            <FavoriteBorder color="primary" />
+                        </MyButton>
+                    )
+            );
         const deleteButton = authenticated && scream.userHandle === handle ? (
             <DeleteScream screamId={scream.screamId} />
         ) : null;
@@ -87,7 +88,8 @@ class Scream extends Component<Props & WithStyles<typeof styles>> {
                     <MyButton tip="comments">
                         <ChatIcon color="primary" />
                     </MyButton>
-                    <span>{scream.commentCount} Comments</span>
+                    <span>{scream.commentCount}Comments</span>
+                    <ScreamDialog screamId={scream.screamId} userHandle={scream.userHandle} />
                 </CardContent>
             </Card>
         );

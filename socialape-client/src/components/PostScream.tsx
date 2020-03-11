@@ -8,21 +8,23 @@ import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {connect} from "react-redux";
 import {ApplicationState} from "../redux/store";
 import {UiState} from "../redux/actions/uiActions";
-import {postScream} from "../redux/actions/dataActions";
+import {clearErrors, postScream} from "../redux/actions/dataActions";
 import MyButton from "../utils/MyButton";
 import {FormEventHandler} from "react";
 
 const styles = createStyles({
     submitButton: {
-        position: "relative"
+        position: "relative",
+        float: "right",
+        marginTop: 10
     },
     progressSpinner: {
         position: "absolute"
     },
     closeButton: {
         position: "absolute",
-        left: '90%',
-        top: '10%'
+        left: '91%',
+        top: '6%'
     },
     textField: {},
 
@@ -30,6 +32,7 @@ const styles = createStyles({
 
 interface Props {
     postScream: typeof postScream
+    clearErrors: typeof clearErrors
     UI: UiState
 }
 
@@ -51,8 +54,7 @@ class PostScream extends Component<Props & RouteComponentProps & WithStyles<type
             this.setState({errors: nextProps.UI.errors});
         }
         if (!nextProps.UI.errors && !nextProps.UI.loading) {
-            this.setState({body: ""});
-            this.handleClose();
+            this.setState({body: "", open: false, errors: {}});
         }
     }
 
@@ -61,6 +63,7 @@ class PostScream extends Component<Props & RouteComponentProps & WithStyles<type
     };
 
     handleClose = () => {
+        this.props.clearErrors();
         this.setState({open: false, errors: {}});
     };
 
@@ -116,7 +119,8 @@ const mapStateToProps = (state: ApplicationState) => ({
 });
 
 const mapActionsToProps = {
-    postScream
+    postScream,
+    clearErrors
 };
 
 // @ts-ignore

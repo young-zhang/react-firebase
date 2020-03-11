@@ -15,18 +15,14 @@ interface Props {
 }
 
 class Home extends Component<Props> {
-    readonly state = {
-        screams: []
-    };
-
     componentDidMount(): void {
         this.props.getScreams();
     }
 
     render() {
-        const { screams, loading } = this.props.data;
-        let recentScreamsMarkup = !loading ?
-            screams.map((scream: IScream) => (<Scream key={scream.screamId} scream={scream} />))
+        const {screams, loading} = this.props.data;
+        let recentScreamsMarkup = !loading
+            ? screams.map((scream: IScream) => <Scream key={scream.screamId} scream={scream} />)
             : (<p>Loading...</p>);
         return (
             // "The [Grid] spacing property is an integer between 0 and 10 inclusive" and cannot be 16!
