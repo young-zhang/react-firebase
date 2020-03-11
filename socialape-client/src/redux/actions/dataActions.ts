@@ -91,3 +91,9 @@ export const deleteScream: ActionCreator<ThunkAction<Promise<void>, any, undefin
             .catch(err => console.log(err));
     };
 };
+
+export const clearErrors: ActionCreator<ThunkAction<Promise<void>, any, undefined, UiStateAction>> = () => {
+    return async (dispatch) => {
+        dispatch(clearErrorAction());
+    };
+};
